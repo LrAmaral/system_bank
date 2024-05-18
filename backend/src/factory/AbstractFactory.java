@@ -1,7 +1,9 @@
 package factory;
-import model.*;
+
+import model.Account;
+import model.User;
 
 public interface AbstractFactory {
-    Account createAccount();
+    Account createAccount(String accountNumber); 
     User createUser();
 }

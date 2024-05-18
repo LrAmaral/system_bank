@@ -1,21 +1,25 @@
 package controller;
 
 import model.*;
-import view.MainView;
 import factory.*;
+import java.util.Random;
 
 public class MainController {
-    private MainView view;
 
-    public MainController(MainView view) {
-        this.view = view;
-    }
-
-    public void createAccountAndUser(AbstractFactory factory) {
-        Account account = factory.createAccount();
+    public Account createAccountAndUser(AbstractFactory factory) {
+        String accountNumber = generateAccountNumber();
+        Account account = factory.createAccount(accountNumber);
         User user = factory.createUser();
 
         account.display();
         user.display();
+        System.out.println("Número da conta: " + accountNumber);
+        return account;
+    }
+
+    private String generateAccountNumber() {
+        Random random = new Random();
+        int number = random.nextInt(90000) + 10000; 
+        return String.valueOf(number);
     }
 }

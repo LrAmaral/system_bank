@@ -1,10 +1,11 @@
 package factory;
+
 import model.*;
 
 public class SavingFactory implements AbstractFactory {
     @Override
-    public Account createAccount() {
-        return new SavingAccount();
+    public Account createAccount(String accountNumber) {
+        return new SavingAccount(accountNumber);
     }
 
     @Override
