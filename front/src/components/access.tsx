@@ -1,16 +1,17 @@
 import { Button } from "../components/ui/button";
 import { Password } from "./password";
+import { Input } from "./ui/input";
 
 export function Access() {
   return (
-    <form className="w-2/3 space-y-6 flex flex-col items-center">
-      <h2 className="font-semibold">Acesse</h2>
+    <form className="space-y-6 flex w-full flex-col items-start">
+      <Input placeholder="Conta" className="text-black"/>
       <Password />
       <Button
         className="bg-white hover:bg-black text-black hover:text-white"
         type="submit"
       >
-        Acessar
+        Acessar Conta
       </Button>
     </form>
   );
