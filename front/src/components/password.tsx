@@ -13,7 +13,7 @@ export function Password() {
   };
 
   return (
-    <div className="relative w-96">
+    <div className="relative w-full space-y-2">
       <Label htmlFor="senha" className="font-semibold">
         Senha
       </Label>

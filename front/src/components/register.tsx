@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { Router } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export function Register() {
   const [isEmailValid, setIsEmailValid] = useState(true);
+
+  const { router } = Router();
 
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -24,48 +27,50 @@ export function Register() {
     setIsEmailValid(re.test(input.value));
   };
 
+  const accessRoute = () => router.push("/initial");
+
   return (
-    <form className="w-full space-y-6 flex flex-col items-center justify-center">
-      <h2 className="font-bold text-start w-full">Registre-se</h2>
-      <div>
-        <Label htmlFor="nome" className="font-semibold">
-          Nome
-        </Label>
-        <Input
-          id="nome"
-          className="text-black w-96"
-          placeholder="Digite seu nome"
-        />
-      </div>
-      <div>
-        <Label htmlFor="email" className="font-semibold">
-          Email
-        </Label>
-        <Input
-          id="email"
-          className="text-black w-96"
-          placeholder="Digite seu email"
-          onSubmit={validateEmail}
-        />
-        {/* {!isEmailValid && (
-          <p className="text-red-500 text-sm mt-1">Email inválido</p>
-        )} */}
-      </div>
-      <div>
-        <Label htmlFor="cpf" className="font-semibold">
-          CPF
-        </Label>
-        <Input
-          id="cpf"
-          type="text"
-          className="text-black w-96"
-          placeholder="Digite seu CPF"
-          onChange={handleCPFChange}
-        />
+    <form className="w-full space-y-8 flex flex-col items-center justify-center">
+      <div className="space-y-2 w-full">
+        <h2 className="font-bold text-start w-full text-xl">Registre-se</h2>
+        <div className="space-y-2 w-full">
+          <Label htmlFor="nome" className="font-semibold">
+            Nome
+          </Label>
+          <Input
+            id="nome"
+            className="text-black"
+            placeholder="Digite seu nome"
+          />
+        </div>
+        <div className="space-y-2 w-full">
+          <Label htmlFor="email" className="font-semibold">
+            Email
+          </Label>
+          <Input
+            id="email"
+            className="text-black"
+            placeholder="Digite seu email"
+            onSubmit={validateEmail}
+          />
+        </div>
+        <div className="space-y-2 w-full">
+          <Label htmlFor="cpf" className="font-semibold">
+            CPF
+          </Label>
+          <Input
+            id="cpf"
+            type="text"
+            className="text-black"
+            placeholder="Digite seu CPF"
+            onChange={handleCPFChange}
+          />
+        </div>
       </div>
       <Button
-        className="bg-white hover:bg-black text-black hover:text-white"
+        className="bg-red-500 text-white w-full hover:bg-black font-medium hover:text-white"
         type="submit"
+        onClick={accessRoute}
       >
         Criar Conta
       </Button>

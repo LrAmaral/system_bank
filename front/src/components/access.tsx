@@ -6,14 +6,16 @@ import { Input } from "./ui/input";
 export function Access() {
   return (
     <form className="space-y-6 flex w-full flex-col items-center justify-center">
-      <h2 className="font-semibold">Acessar</h2>
-      <div>
-        <Label htmlFor="conta">Conta</Label>
-        <Input id="conta" className="text-black w-80" placeholder="Conta" />
-      </div>{" "}
-      <Password />
+        <h2 className="font-bold text-start w-full text-xl">Acessar</h2>
+        <div className="space-y-2 w-full">
+        <div className="space-y-2 w-full">
+          <Label htmlFor="conta">Conta</Label>
+          <Input id="conta" className="text-black w-full" placeholder="Conta" />
+        </div>{" "}
+        <Password />
+      </div>
       <Button
-        className="bg-white hover:bg-black text-black hover:text-white"
+        className="bg-red-500 text-white w-full hover:bg-black font-medium hover:text-white"
         type="submit"
       >
         Acessar Conta
