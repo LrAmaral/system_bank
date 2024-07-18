@@ -1,24 +1,38 @@
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "../components/ui/input-otp";
+import { Eye } from "lucide-react";
+import { EyeOff } from "lucide-react";
+import { useState } from "react";
+
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 export function Password() {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const handleSwitchingPassword = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   return (
-    <InputOTP maxLength={6}>
-      <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-      </InputOTPGroup>
-      <InputOTPSeparator />
-      <InputOTPGroup>
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
-      </InputOTPGroup>
-    </InputOTP>
+    <div className="relative w-96">
+      <Label htmlFor="senha" className="font-semibold">
+        Senha
+      </Label>
+      <Input
+        type={isPasswordVisible ? "text" : "password"}
+        className="text-black w-full pr-10"
+        placeholder="Digite sua senha"
+      />
+      {isPasswordVisible ? (
+        <Eye
+          onClick={handleSwitchingPassword}
+          className="absolute top-8 right-3 text-black cursor-pointer"
+        />
+      ) : (
+        <EyeOff
+          onClick={handleSwitchingPassword}
+          className="absolute top-8 right-3 text-black cursor-pointer"
+        />
+      )}
+    </div>
   );
 }

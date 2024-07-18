@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Button } from "./components/ui/button";
 import { Access } from "./components/access";
 import { Register } from "./components/register";
@@ -17,7 +18,7 @@ function App() {
           jornada para um futuro financeiro mais brilhante começa agora!
         </p>
       </div>
-      <div className="flex flex-col items-center justify-center gap-8">
+      <div className="flex flex-col items-center bg-red-500 w-[28rem] h-[28rem] rounded-lg justify-center gap-8">
         {isRegisterOpen && (
           <div className="flex flex-col items-center justify-center">
             <Register />
@@ -47,7 +48,7 @@ function App() {
           </div>
         )}
         {!isAccessOpen && !isRegisterOpen && (
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 items-center justify-center">
             <Button
               onClick={() => {
                 setIsRegisterOpen(true);
