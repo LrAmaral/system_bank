@@ -1,57 +1,81 @@
-package com.systembank.app.rest.Controller;
+package com.systembank.app.rest.controller;
 
-
+import com.systembank.app.rest.models.Account;
+import com.systembank.app.rest.repo.AccountRepo;
+import com.systembank.app.rest.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.systembank.app.rest.Models.Account;
-import com.systembank.app.rest.Repo.AccountRepo;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ApiController {
 
-  	@Autowired
-	  private AccountRepo userRepo;
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private AccountRepo accountRepo;
 
     @GetMapping(value = "/")
     public String getPage() {
-      return "Hello, World!";
+        return "Hello, World!";
     }
 
-    @GetMapping(value = "/account")  
-    public List<Account> getUsers() {
-      return userRepo.findAll();
+    @GetMapping(value = "/account")
+    public List<Account> getAccounts() {
+        return accountRepo.findAll();
     }
 
     @PostMapping(value = "/save")
-    public String saveUser(@RequestBody Account account) {
-      userRepo.save(account);
-      return "success";
+    public String saveAccount(@RequestBody Account account) {
+        accountRepo.save(account);
+        return "success";
     }
 
     @PutMapping(value = "/update/{id}")
-    public String updateUser(@RequestBody Account account, @PathVariable long id) {
-      // account updateUser = userRepo.findById(id).get();
-      // updateUser.setFirstName(account.getFirstName());
-      // updateUser.setLastName(account.getLastName());
-      // updateUser.setOccupation(account.getOccupation());
-      // updateUser.setAge(account.getAge());
-      // userRepo.save(updateUser);
-      return "updated";
+    public String updateAccount(@RequestBody Account account, @PathVariable long id) {
+        Optional<Account> optionalAccount = accountRepo.findById(id);
+        if (optionalAccount.isPresent()) {
+            Account existingAccount = optionalAccount.get();
+            existingAccount.setAccountNumber(account.getAccountNumber());
+            existingAccount.setAccountClientName(account.getAccountClientName());
+            existingAccount.setPasswordAccount(account.getPasswordAccount());
+            existingAccount.setAccountBalance(account.getAccountBalance());
+            accountRepo.save(existingAccount);
+            return "updated";
+        } else {
+            return "account not found";
+        }
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    public String deleteUser(@PathVariable long id){
-      // account deleteUser = userRepo.findById(id).get();
-      // userRepo.delete(deleteUser);
-      return "deleted account with the id:" + id;
+    public String deleteAccount(@PathVariable long id) {
+        Optional<Account> optionalAccount = accountRepo.findById(id);
+        if (optionalAccount.isPresent()) {
+            accountRepo.delete(optionalAccount.get());
+            return "deleted account with the id: " + id;
+        } else {
+            return "account not found";
+        }
+    }
+
+    @PostMapping(value = "/deposit/{id}")
+    public String deposit(@PathVariable Long id, @RequestParam Double amount) {
+        accountService.deposit(id, amount);
+        return "Deposited successfully";
+    }
+
+    @PostMapping(value = "/withdraw/{id}")
+    public String withdraw(@PathVariable Long id, @RequestParam Double amount) {
+        accountService.withdraw(id, amount);
+        return "Withdrawn successfully";
+    }
+
+    @PostMapping(value = "/transfer")
+    public String transfer(@RequestParam Long fromAccountId, @RequestParam Long toAccountId, @RequestParam Double amount) {
+        accountService.transfer(fromAccountId, toAccountId, amount);
+        return "Transferred successfully";
     }
 }

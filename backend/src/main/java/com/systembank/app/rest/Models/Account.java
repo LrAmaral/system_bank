@@ -1,4 +1,4 @@
-package com.systembank.app.rest.Models;
+package com.systembank.app.rest.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Account {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -25,43 +25,44 @@ public class Account {
   @Column
   private String passwordAccount;
 
-  public int getId(int id){
+  // Getters e Setters
+  public Long getId() {
     return id;
   }
 
-  public void setId(Long id){
+  public void setId(Long id) {
     this.id = id;
   }
 
-  public String getAccountNumber(){
+  public String getAccountNumber() {
     return accountNumber;
   }
 
-  public void setAccountNumber(String accountNumber){
+  public void setAccountNumber(String accountNumber) {
     this.accountNumber = accountNumber;
   }
 
-  public String getAccountClientName(){
+  public String getAccountClientName() {
     return accountClientName;
   }
 
-  public void setAccountClientName(String accountClientName){
+  public void setAccountClientName(String accountClientName) {
     this.accountClientName = accountClientName;
   }
 
-  public Double getAccountBalance(){
+  public Double getAccountBalance() {
     return accountBalance;
   }
 
-  public void setAccountBalance(Double accountBalance){
+  public void setAccountBalance(Double accountBalance) {
     this.accountBalance = accountBalance;
   }
- 
-  public String getPasswordAccount(){
+
+  public String getPasswordAccount() {
     return passwordAccount;
   }
 
-  public void setPasswordAccount(String passwordAccount){
+  public void setPasswordAccount(String passwordAccount) {
     this.passwordAccount = passwordAccount;
   }
 }

@@ -1,6 +1,7 @@
-package com.systembank.app.rest.Repo;
+package com.systembank.app.rest.repo;
 
+import com.systembank.app.rest.models.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.systembank.app.rest.Models.Account;
 
-public interface AccountRepo  extends JpaRepository<Account, Long>{}
+public interface AccountRepo extends JpaRepository<Account, Long> {
+}
