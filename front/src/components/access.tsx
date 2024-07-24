@@ -15,7 +15,7 @@ export function Access() {
         <Password />
       </div>
       <Button
-        className="bg-red-500 text-white w-full hover:bg-black font-medium hover:text-white"
+        className="bg-red-500 text-white w-full hover:bg-red-700 transition ease-in-out duration-300  font-medium hover:text-white"
         type="submit"
       >
         Acessar Conta

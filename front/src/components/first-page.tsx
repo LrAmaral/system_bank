@@ -1,3 +1,11 @@
+import Content from "./content";
+import NavBar from "./navbar";
+
 export default function FirstPage() {
-  return <div>FirstPage</div>;
+  return (
+    <div className="w-full flex bg-zinc-900 h-screen text-white">
+      <NavBar />
+      <Content />
+    </div>
+  )
 }
