@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { Router } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export function Register() {
   const [isEmailValid, setIsEmailValid] = useState(true);
-
-  const { router } = Router();
+  const navigate = useNavigate();
 
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -27,10 +26,28 @@ export function Register() {
     setIsEmailValid(re.test(input.value));
   };
 
-  const accessRoute = () => router.push("/initial");
+  const accessRoute = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isEmailValid) {
+      navigate("/initial");
+    } else {
+      alert("Por favor, insira um e-mail válido.");
+    }
+  };
+
+  const colorScheme = {
+    primary: "bg-red-500",
+    hoverPrimary: "hover:bg-red-700",
+    textPrimary: "text-white",
+    error: "text-red-500",
+    hoverError: "hover:text-red-700",
+  };
 
   return (
-    <form className="w-full space-y-8 flex flex-col items-center justify-center">
+    <form
+      className="w-full space-y-8 flex flex-col items-center justify-center"
+      onSubmit={accessRoute}
+    >
       <div className="space-y-2 w-full">
         <h2 className="font-bold text-start w-full text-xl">Registre-se</h2>
         <div className="space-y-2 w-full">
@@ -49,9 +66,9 @@ export function Register() {
           </Label>
           <Input
             id="email"
-            className="text-black"
+            className={`text-black ${!isEmailValid ? colorScheme.error : ""}`}
             placeholder="Digite seu email"
-            onSubmit={validateEmail}
+            onBlur={validateEmail}
           />
         </div>
         <div className="space-y-2 w-full">
@@ -68,9 +85,8 @@ export function Register() {
         </div>
       </div>
       <Button
-        className="bg-red-500 text-white w-full hover:bg-red-700 transition ease-in-out duration-300  font-medium hover:text-white"
+        className={`${colorScheme.primary} ${colorScheme.textPrimary} ${colorScheme.hoverPrimary} w-full font-medium`}
         type="submit"
-        onClick={accessRoute}
       >
         Criar Conta
       </Button>

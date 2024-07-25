@@ -8,13 +8,12 @@ import NotFoundPage from "./components/not-found-page";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-     <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}/>
+        <Route path="/" element={<App />} />
         <Route path="/initial" element={<FirstPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
-    <App />
   </React.StrictMode>
 );

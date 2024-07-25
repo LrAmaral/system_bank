@@ -1,9 +1,7 @@
 import { useState } from "react";
-
 import { Button } from "../components/ui/button";
 import { Access } from "../components/access";
 import { Register } from "../components/register";
-
 import logo from "/favicon.ico";
 
 export default function Main() {
@@ -14,8 +12,8 @@ export default function Main() {
     <main className="bg-bgColor text-white overflow-hidden select-none p-8 md:p-0 gap-10 md:gap-0 flex md:flex-row justify-around flex-col h-screen items-center">
       <div className="flex flex-col justify-center h-0 md:h-[28rem] items-start gap-4 md:gap-8">
         <img src={logo} alt="imagem" loading="lazy" className="h-16" />
-        <p className="w-full md:w-[32rem] text-sm md:text-base font-semibold">
-          Sua jornada para um futuro financeiro mais brilhante começa agora
+        <p className="font-semibold text-2xl">
+          Comece sua jornada financeira agora
           <span className="text-red-500">!</span>
         </p>
       </div>
@@ -25,7 +23,7 @@ export default function Main() {
             <Register />
             <Button
               onClick={() => {
-                setIsAccessOpen(!isAccessOpen);
+                setIsAccessOpen(true);
                 setIsRegisterOpen(false);
               }}
               className="bg-red-500 text-white mt-4 w-full hover:bg-black font-medium hover:text-white"
@@ -39,7 +37,7 @@ export default function Main() {
             <Access />
             <Button
               onClick={() => {
-                setIsRegisterOpen(!isRegisterOpen);
+                setIsRegisterOpen(true);
                 setIsAccessOpen(false);
               }}
               className="bg-red-500 text-white mt-4 w-full hover:bg-black font-medium hover:text-white"

@@ -7,5 +7,5 @@ export default function FirstPage() {
       <NavBar />
       <Content />
     </div>
-  )
+  );
 }
