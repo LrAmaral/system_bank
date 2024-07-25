@@ -9,19 +9,45 @@ function Content() {
         Bom dia, <span className='text-red-500'>{usuario ? `usuario!` : 'Lucas!'}
         </span>
       </h1>
-      <div className='w-96 h-80 flex flex-col justify-between rounded-lg p-6 bg-zinc-800'>
-      <div className='space-y-2'>
-        <p className='text-2xl font-semibold'>Saldo disponível</p>
-        <p className='text-2xl font-bold'>R$2.500,00</p>
-      </div>
-      <div className='space-x-4 font-semibold'>
+      <div className='flex gap-10'>
+        <div className='w-96 h-60 flex flex-col justify-between rounded-lg p-6 bg-zinc-800'>
+        <div className='space-y-2'>
+          <p className='text-2xl font-semibold'>Saldo disponível</p>
+          <p className='text-2xl font-bold'>R$2.538,98  </p>
+        </div>
+        <div className='space-x-4 font-semibold'>
+          <button  className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300  font-medium hover:text-white">
+            Sacar
+          </button>
+          <button  className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
+            Depositar
+          </button>
+        </div>
+        </div>
+        <div className='w-96 h-60 space-y-6 flex flex-col justify-between rounded-lg p-6 bg-zinc-800'>
+        <div className='space-y-2'>
+          <p className='text-2xl font-semibold'>Extrato</p>
+        <div className='space-x-4 font-semibold'>
+          <div className='space-y-2 p-2 bg-zinc-900 rounded-lg'>
+            <div className='space-x-2 flex'>
+              <span className='border-r-2 border-red-500'/>
+              <p className='text-sm text-zinc-400'>-R$100,00</p>
+            </div>
+            <div className='space-x-2 flex'>
+              <span className='border-r-2 border-green-500'/>
+              <p className='text-sm text-zinc-400'>+R$125,45</p>
+            </div>
+            <div className='space-x-2 flex'>
+              <span className='border-r-2 border-red-500'/>
+              <p className='text-sm text-zinc-400'>-R$150,00</p>
+            </div>
+          </div>
+        </div>
+        </div>
         <button  className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300  font-medium hover:text-white">
-          Sacar
+          Ver mais
         </button>
-        <button  className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
-          Depositar
-        </button>
-      </div>
+        </div>
       </div>
     </div>
   )
