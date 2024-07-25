@@ -1,7 +1,7 @@
-package com.systembank.app.rest.controller;
+package com.systembank.app.rest.Controller;
 
-import com.systembank.app.rest.models.Account;
-import com.systembank.app.rest.repo.AccountRepo;
+import com.systembank.app.rest.Models.Account;
+import com.systembank.app.rest.Repo.AccountRepo;
 import com.systembank.app.rest.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173") // Permite CORS para a URL do frontend
 public class ApiController {
 
     @Autowired

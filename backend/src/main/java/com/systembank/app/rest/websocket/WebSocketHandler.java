@@ -2,7 +2,7 @@ package com.systembank.app.rest.websocket;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.systembank.app.rest.models.Account;
+import com.systembank.app.rest.Models.Account;
 import com.systembank.app.rest.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;

@@ -1,12 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = import.meta.env.VITE_KEY;
 
 const api = axios.create({
-    baseURL: API_URL,
+  baseURL: API_URL,
+  headers: {
+    Accept: "application/json",
+  },
+  
 });
 
-export const getAccounts = () => api.get('/account');
+export const getAccounts = () => api.get("/account");
 // export const saveAccount = (account) => api.post('/save', account);
 // export const updateAccount = (id, account) => api.put(`/update/${id}`, account);
 // export const deleteAccount = (id) => api.delete(`/delete/${id}`);

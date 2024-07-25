@@ -13,6 +13,7 @@ function Content() {
   const fetchAccountData = async () => {
     try {
       const response = await getAccounts();
+      console.log("Resposta da API:", response);
       if (response.data.length > 0) {
         setAccount(response.data[0]);
       }

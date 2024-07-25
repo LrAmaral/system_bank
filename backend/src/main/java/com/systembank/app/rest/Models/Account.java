@@ -1,4 +1,4 @@
-package com.systembank.app.rest.models;
+package com.systembank.app.rest.Models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

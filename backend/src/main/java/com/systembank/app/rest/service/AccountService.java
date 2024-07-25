@@ -1,9 +1,9 @@
 package com.systembank.app.rest.service;
 
-import com.systembank.app.rest.models.Account;
+import com.systembank.app.rest.Models.Account;
 import com.systembank.app.rest.observable.AccountObservable;
 import com.systembank.app.rest.observer.AccountObserver;
-import com.systembank.app.rest.repo.AccountRepo;
+import com.systembank.app.rest.Repo.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
