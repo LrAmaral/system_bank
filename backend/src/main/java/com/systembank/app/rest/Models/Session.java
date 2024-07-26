@@ -1,11 +1,10 @@
 package com.systembank.app.rest.Models;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
-public class Account {
+public class Session {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,17 +14,14 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(unique = true)
-    private String accountNumber;
-
     @Column
-    private String accountType;
-
-    @Column
-    private BigDecimal balance;
+    private String sessionToken;
 
     @Column
     private Date createdAt;
+
+    @Column
+    private Date expiresAt;
 
     // Getters and Setters
     public Long getId() {
@@ -44,28 +40,12 @@ public class Account {
         this.user = user;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getSessionToken() {
+        return sessionToken;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 
     public Date getCreatedAt() {
@@ -74,5 +54,13 @@ public class Account {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Date getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(Date expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }

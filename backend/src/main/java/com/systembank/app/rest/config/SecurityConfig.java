@@ -1,4 +1,4 @@
-package com.systembank.app.rest.config;
+package com.systembank.app.rest.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

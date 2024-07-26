@@ -1,19 +1,31 @@
 import { useState, useEffect } from "react";
-import { getAccounts } from "../services/api";
+import { getAccounts, getUsers } from "../services/api";
 import { Account } from "../types/account";
+import { RegisterUser } from "../types/user";
 
 function Content() {
-  const [usuario, setUsuario] = useState("Lucas");
+  const [user, setUser] = useState<RegisterUser | null>(null);
   const [account, setAccount] = useState<Account | null>(null);
 
   useEffect(() => {
+    fetchUserData();
     fetchAccountData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await getUsers();
+      if (response.data.length > 0) {
+        setUser(response.data[0]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+    }
+  };
 
   const fetchAccountData = async () => {
     try {
       const response = await getAccounts();
-      console.log("Resposta da API:", response);
       if (response.data.length > 0) {
         setAccount(response.data[0]);
       }
@@ -25,7 +37,11 @@ function Content() {
   return (
     <div className="bg-bgColor w-full h-screen p-20 space-y-10">
       <h1 className="text-2xl font-bold">
-        Bom dia, <span className="text-red-500">{usuario}!</span>
+        Bom dia,{" "}
+        <span className="text-red-500">
+          {user ? user.username : "Carregando..."}
+        </span>
+        !
       </h1>
       <div className="flex gap-10">
         <div className="w-96 h-60 flex flex-col justify-between rounded-lg p-6 bg-zinc-800">
