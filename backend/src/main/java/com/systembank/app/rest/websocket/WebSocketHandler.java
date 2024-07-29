@@ -3,7 +3,8 @@ package com.systembank.app.rest.websocket;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.systembank.app.rest.Models.Account;
-import com.systembank.app.rest.service.AccountService;
+import com.systembank.app.rest.Services.AccountService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.TextMessage;
@@ -47,11 +48,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private void handleCreateAccount(@NonNull WebSocketSession session, Map<String, Object> message) throws Exception {
         try {
-            String accountNumber = (String) message.get("accountNumber");
             String accountClientName = (String) message.get("accountClientName");
             String passwordAccount = (String) message.get("passwordAccount");
 
-            Account account = accountService.createAccount(accountNumber, accountClientName, passwordAccount);
+            Account account = accountService.createAccount(accountClientName, passwordAccount);
             String response = objectMapper.writeValueAsString(account);
             session.sendMessage(new TextMessage(response));
         } catch (Exception e) {

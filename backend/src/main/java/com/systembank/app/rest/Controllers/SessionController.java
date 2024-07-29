@@ -1,4 +1,4 @@
-package com.systembank.app.rest.Controller;
+package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Models.Session;
 import com.systembank.app.rest.Repo.SessionRepo;

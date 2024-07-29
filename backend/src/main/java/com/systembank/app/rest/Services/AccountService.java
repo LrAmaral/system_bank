@@ -1,4 +1,4 @@
-package com.systembank.app.rest.service;
+package com.systembank.app.rest.Services;
 
 import com.systembank.app.rest.Models.Account;
 import com.systembank.app.rest.observable.AccountObservable;
@@ -21,21 +21,28 @@ public class AccountService {
         accountObservable.addObserver(observer);
     }
 
-    public Account createAccount(String accountNumber, String accountClientName, String passwordAccount) {
+    public Account createAccount(String accountClientName, String passwordAccount) {
         Account account = new Account();
-        account.setAccountNumber(accountNumber);
-        account.setAccountClientName(accountClientName);
         account.setPasswordAccount(passwordAccount);
-        account.setAccountBalance(0.0);
-        return accountRepo.save(account);
+        account.setBalance(0.0);
+
+        // Salvar a conta pela primeira vez para gerar o ID
+        Account savedAccount = accountRepo.save(account);
+
+        // Gerar o número da conta com base no ID
+        String accountNumber = String.format("%06d", savedAccount.getId());
+        savedAccount.setAccountNumber(accountNumber);
+
+        // Salvar a conta novamente com o número da conta gerado
+        return accountRepo.save(savedAccount);
     }
 
     public Account deposit(Long id, Double amount) {
         Optional<Account> optionalAccount = accountRepo.findById(id);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            account.setAccountBalance(account.getAccountBalance() + amount);
-            accountObservable.setAccountBalance(account.getAccountBalance());
+            account.setBalance(account.getBalance() + amount);
+            accountObservable.setAccountBalance(account.getBalance());
             return accountRepo.save(account);
         } else {
             throw new RuntimeException("Account not found");
@@ -46,9 +53,9 @@ public class AccountService {
         Optional<Account> optionalAccount = accountRepo.findById(id);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            if (account.getAccountBalance() >= amount) {
-                account.setAccountBalance(account.getAccountBalance() - amount);
-                accountObservable.setAccountBalance(account.getAccountBalance());
+            if (account.getBalance() >= amount) {
+                account.setBalance(account.getBalance() - amount);
+                accountObservable.setAccountBalance(account.getBalance());
                 return accountRepo.save(account);
             } else {
                 throw new RuntimeException("Insufficient balance");

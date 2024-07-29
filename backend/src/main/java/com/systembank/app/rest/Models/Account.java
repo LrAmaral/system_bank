@@ -1,7 +1,6 @@
 package com.systembank.app.rest.Models;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -22,10 +21,13 @@ public class Account {
     private String accountType;
 
     @Column
-    private BigDecimal balance;
+    private Double balance;
 
     @Column
     private Date createdAt;
+
+    @Column
+    private String passwordAccount;
 
     // Getters and Setters
     public Long getId() {
@@ -60,11 +62,11 @@ public class Account {
         this.accountType = accountType;
     }
 
-    public BigDecimal getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
@@ -74,5 +76,13 @@ public class Account {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getPasswordAccount() {
+        return passwordAccount;
+    }
+
+    public void setPasswordAccount(String passwordAccount) {
+        this.passwordAccount = passwordAccount;
     }
 }
