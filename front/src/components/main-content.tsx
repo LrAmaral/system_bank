@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { Access } from "../components/access";
-import { Register } from "../components/register";
+import { Access } from "../components/login/access";
+import { Register } from "../components/register/register";
 import logo from "/favicon.ico";
 
 export default function Main() {

@@ -2,11 +2,3 @@
 
 #FF6363
 #76ABAE
-
-# Color Palette
-
-https://colorhunt.co/palette/22283131363f76abaeeeeeee
-
-# Bank ui inspiration 
-
-https://dribbble.com/shots/22078896-Bank-App-UI
