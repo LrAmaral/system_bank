@@ -4,7 +4,7 @@ import App from "./app";
 import "./styles/index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import FirstPage from "./components/first-page";
-import NotFoundPage from "./components/not-found-page";
+import NotFoundPage from "./components/not-found/not-found-page";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

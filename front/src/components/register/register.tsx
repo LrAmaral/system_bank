@@ -1,11 +1,11 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { registerUser } from "../services/api";
-import { toast } from "./ui/use-toast";
-import { RegisterUser } from "../types/user";
+import { Button } from "../../components/ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { registerUser } from "../../services/api";
+import { toast } from "../ui/use-toast";
+import { RegisterUser } from "../../types/user";
 
 export function Register() {
   const [formData, setFormData] = useState<RegisterUser>({
@@ -44,11 +44,10 @@ export function Register() {
       password: cleanedValue,
     });
 
-    // Validate the password when it's completed (i.e., length is 6)
     if (cleanedValue.length === 6) {
       validatePassword(cleanedValue);
     } else {
-      setIsPasswordValid(true); // While typing, we assume the password is valid
+      setIsPasswordValid(true);
     }
   };
 

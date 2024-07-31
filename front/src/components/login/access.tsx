@@ -1,10 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@radix-ui/react-label";
-import { Button } from "../components/ui/button";
-import { Input } from "./ui/input";
-import { loginUser } from "../services/api";
-import { toast } from "./ui/use-toast"; // Assumindo que você tem o componente de toast disponível
+import { Button } from "../../components/ui/button";
+import { Input } from "../ui/input";
+import { loginUser } from "../../services/api";
+import { toast } from "../ui/use-toast";
 
 export function Access() {
   const [accountNumber, setAccountNumber] = useState("");
@@ -22,6 +22,15 @@ export function Access() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!accountNumber || !password) {
+      toast({
+        description: "Por favor, preencha todos os campos corretamente.",
+        status: "error",
+      });
+      return;
+    }
+
     try {
       const response = await loginUser(accountNumber, password);
       if (response.data) {
