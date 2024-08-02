@@ -23,7 +23,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
         String payload = message.getPayload();
-        // Usando TypeReference para especificar os tipos de chave e valor
         Map<String, Object> receivedMessage = objectMapper.readValue(payload, new TypeReference<Map<String,Object>>() {});
 
         String messageType = (String) receivedMessage.get("type");

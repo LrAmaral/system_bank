@@ -1,61 +1,68 @@
 import { useState, useEffect } from "react";
-import { getAccounts, getUsers } from "../services/api";
-import { Account } from "../types/account";
+import { deposit } from "../services/api";
 import { RegisterUser } from "../types/user";
+import DepositModal from "./deposit-modal";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);
-  const [account, setAccount] = useState<Account | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchUserData();
-    fetchAccountData();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
-  const fetchUserData = async () => {
+  const handleDeposit = async (amount: number) => {
     try {
-      const response = await getUsers();
-      if (response.data.length > 0) {
-        setUser(response.data[0]);
+      if (user) {
+        await deposit(parseInt(user.id, 10), amount);
+        setUser({ ...user, balance: (user.balance || 0) + amount });
       }
     } catch (error) {
-      console.error("Erro ao buscar dados do usuário:", error);
-    }
-  };
-
-  const fetchAccountData = async () => {
-    try {
-      const response = await getAccounts();
-      if (response.data.length > 0) {
-        setAccount(response.data[0]);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar dados da conta:", error);
+      console.error("Erro ao realizar depósito:", error);
     }
   };
 
   return (
     <div className="bg-bgColor w-full h-screen p-20 space-y-10">
-      <h1 className="text-2xl font-bold">
-        Bom dia,{" "}
-        <span className="text-red-500">
-          {user ? user.username : "Carregando..."}
-        </span>
-        !
-      </h1>
+      <div className="text-2xl font-bold flex flex-col p-4 bg-gray-100 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <p className="text-gray-800">Bom dia,</p>
+          <span className="text-red-600 font-bold">
+            {user ? user.username : "Carregando..."}
+          </span>
+        </div>
+        <p className="text-base text-gray-700">
+          {user ? (
+            <span>
+              Conta:{" "}
+              <strong className="text-red-500">{user.accountNumber}</strong>
+            </span>
+          ) : (
+            "Carregando..."
+          )}
+        </p>
+      </div>
       <div className="flex gap-10">
         <div className="w-96 h-60 flex flex-col justify-between rounded-lg p-6 bg-zinc-800">
           <div className="space-y-2">
             <p className="text-2xl font-semibold">Saldo disponível</p>
             <p className="text-2xl font-bold">
-              {account ? `R$${account.accountBalance}` : "Carregando..."}
+              {user
+                ? `R$ ${user.balance === null ? "0.00" : user.balance}`
+                : "Carregando..."}
             </p>
           </div>
           <div className="space-x-4 font-semibold">
             <button className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
               Sacar
             </button>
-            <button className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
+            >
               Depositar
             </button>
           </div>
@@ -85,6 +92,11 @@ function Content() {
           </button>
         </div>
       </div>
+      <DepositModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onDeposit={handleDeposit}
+      />
     </div>
   );
 }

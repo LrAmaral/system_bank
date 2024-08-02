@@ -1,91 +1,105 @@
 package com.systembank.app.rest.Models;
 
-import java.sql.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.sql.Date;
 
 @Entity
 public class User {
-  
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column
-  private String username;
+    @Column
+    private String username;
 
-  @Column
-  private String password;
+    @Column
+    private String password;
 
-  @Column
-  private String email;
+    @Column
+    private String email;
 
-  @Column
-  private String CPF;
+    @Column
+    private String CPF;
 
-  @Column
-  private String accountNumber;  
+    @Column
+    private Double balance = 0.0;  
 
-  @Column
-  private Date createdAt;
+    @Column
+    private String accountNumber;
 
-  public long getId() {
-    return id;
-  }
+    @Column
+    private Date createdAt;
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public User() {
+        this.balance = 0.0;  
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    
+    public Long getId() {
+        return id;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public String getCpf() {
-    return CPF;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public void setCpf(String CPF) {
-    this.CPF = CPF;
-  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-  public String getAccountNumber() {
-    return accountNumber;
-  }
+    public String getCpf() {
+        return CPF;
+    }
 
-  public void setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
-  }
+    public void setCpf(String CPF) {
+        this.CPF = CPF;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Double getBalance() {
+        return balance;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 }

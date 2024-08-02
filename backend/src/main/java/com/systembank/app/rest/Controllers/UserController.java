@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @RestController
@@ -32,7 +32,7 @@ public class UserController {
                     .body(new ErrorResponse("Erro ao buscar usuários", e.getMessage()));
         }
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable long id) {
         try {
@@ -58,12 +58,13 @@ public class UserController {
                     "A senha deve ter exatamente 6 dígitos e não pode conter sequências repetidas ou numéricas."
             ));
         }
-
+    
         try {
             String accountNumber = generateAccountNumber();
             user.setAccountNumber(accountNumber);
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
-
+            user.setBalance(0.0); 
+    
             userRepo.save(user);
             return ResponseEntity.ok(new SuccessResponse("Usuário salvo com sucesso. Número da conta: " + accountNumber));
         } catch (Exception e) {
@@ -72,6 +73,31 @@ public class UserController {
         }
     }
 
+    @PostMapping("/{id}/deposit")
+    public ResponseEntity<?> deposit(@PathVariable long id, @RequestBody Map<String, Double> depositDetails) {
+        double amount = depositDetails.getOrDefault("amount", 0.0);
+
+        if (amount <= 0) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Valor inválido", "O valor do depósito deve ser maior que zero."));
+        }
+
+        try {
+            Optional<User> userOptional = userRepo.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.setBalance(user.getBalance() + amount); 
+                userRepo.save(user); 
+                return ResponseEntity.ok(new SuccessResponse("Depósito realizado com sucesso"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("Usuário não encontrado", "Não há nenhum usuário com o ID fornecido."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erro ao realizar depósito", e.getMessage()));
+        }
+    }
+    
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable long id) {
         String password = user.getPassword();
@@ -90,6 +116,7 @@ public class UserController {
                 existingUser.setPassword(user.getPassword());
                 existingUser.setEmail(user.getEmail());
                 existingUser.setCpf(user.getCpf());
+                existingUser.setBalance(user.getBalance());
                 existingUser.setCreatedAt(user.getCreatedAt());
                 userRepo.save(existingUser);
                 return ResponseEntity.ok(new SuccessResponse("Usuário atualizado com sucesso"));
@@ -139,9 +166,10 @@ public class UserController {
         }
     }
 
-
     private String generateAccountNumber() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        SecureRandom random = new SecureRandom();
+        int number = random.nextInt(1_000_000); 
+        return String.format("%06d", number); 
     }
 
     private boolean isPasswordValid(String password) {
@@ -167,7 +195,6 @@ public class UserController {
         return true;
     }
 
-    // Classe para resposta de erro
     public static class ErrorResponse {
         private String error;
         private String message;
@@ -194,7 +221,6 @@ public class UserController {
         }
     }
 
-    // Classe para resposta de sucesso
     public static class SuccessResponse {
         private String message;
 

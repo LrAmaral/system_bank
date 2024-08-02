@@ -33,7 +33,9 @@ export function Access() {
 
     try {
       const response = await loginUser(accountNumber, password);
-      if (response.data) {
+      if (response.status === 200 && response.data) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+
         toast({ description: "Acesso realizado com sucesso!" });
         navigate("/initial");
       } else {

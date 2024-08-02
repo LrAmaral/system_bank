@@ -13,6 +13,7 @@ export function Register() {
     password: "",
     email: "",
     cpf: "",
+    balance: 0,
   });
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
@@ -106,11 +107,10 @@ export function Register() {
       formData.cpf
     ) {
       try {
-        const response = await registerUser({
+        await registerUser({
           ...formData,
           createdAt: new Date().toISOString().split("T")[0],
         });
-        console.log(response);
         navigate("/initial");
       } catch (error) {
         toast({ description: "Erro ao registrar usuário. Tente novamente." });

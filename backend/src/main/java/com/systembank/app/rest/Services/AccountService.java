@@ -4,8 +4,9 @@ import com.systembank.app.rest.Models.Account;
 import com.systembank.app.rest.Repo.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -23,12 +24,12 @@ public class AccountService {
         account.setBalance(0.0);
         return accountRepo.save(account);
     }
-
     
-     private String generateAccountNumber() {
-        return UUID.randomUUID().toString().substring(0, 12); 
+    private String generateAccountNumber() {
+        SecureRandom random = new SecureRandom();
+        int number = random.nextInt(1_000_000);
+        return String.format("%06d", number); 
     }
-    
     
     public Account deposit(Long id, Double amount) {
         Optional<Account> optionalAccount = accountRepo.findById(id);

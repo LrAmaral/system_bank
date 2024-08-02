@@ -1,7 +1,14 @@
 package com.systembank.app.rest.Models;
 
-import jakarta.persistence.*;
-import java.sql.Date;
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Account {
@@ -21,7 +28,7 @@ public class Account {
     private String accountType;
 
     @Column
-    private Double balance;
+    private Double balance = 0.0;  
 
     @Column
     private Date createdAt;
@@ -29,7 +36,7 @@ public class Account {
     @Column
     private String passwordAccount;
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }
