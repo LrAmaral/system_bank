@@ -1,4 +1,4 @@
-package com.systembank.app.rest.websocket;
+package com.systembank.app.rest.WebSocket;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +50,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String accountClientName = (String) message.get("accountClientName");
             String passwordAccount = (String) message.get("passwordAccount");
 
+            if (accountClientName == null || passwordAccount == null) {
+                session.sendMessage(new TextMessage("Error: Missing accountClientName or passwordAccount"));
+                return;
+            }
+
             Account account = accountService.createAccount(accountClientName, passwordAccount);
             String response = objectMapper.writeValueAsString(account);
             session.sendMessage(new TextMessage(response));
@@ -62,6 +67,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         try {
             Long id = Long.valueOf((String) message.get("id"));
             Double amount = Double.valueOf((String) message.get("amount"));
+
+            if (amount <= 0) {
+                session.sendMessage(new TextMessage("Error: Deposit amount must be positive"));
+                return;
+            }
 
             Account account = accountService.deposit(id, amount);
             String response = objectMapper.writeValueAsString(account);
@@ -76,6 +86,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             Long id = Long.valueOf((String) message.get("id"));
             Double amount = Double.valueOf((String) message.get("amount"));
 
+            if (amount <= 0) {
+                session.sendMessage(new TextMessage("Error: Withdrawal amount must be positive"));
+                return;
+            }
+
             Account account = accountService.withdraw(id, amount);
             String response = objectMapper.writeValueAsString(account);
             session.sendMessage(new TextMessage(response));
@@ -89,6 +104,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             Long fromAccountId = Long.valueOf((String) message.get("fromAccountId"));
             Long toAccountId = Long.valueOf((String) message.get("toAccountId"));
             Double amount = Double.valueOf((String) message.get("amount"));
+
+            if (amount <= 0) {
+                session.sendMessage(new TextMessage("Error: Transfer amount must be positive"));
+                return;
+            }
 
             accountService.transfer(fromAccountId, toAccountId, amount);
             session.sendMessage(new TextMessage("Transfer successful"));

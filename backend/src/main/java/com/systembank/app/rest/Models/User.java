@@ -1,5 +1,6 @@
 package com.systembank.app.rest.Models;
 
+import com.systembank.app.rest.Interface.UserInterface;  // Importar a interface correta
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +9,7 @@ import jakarta.persistence.Id;
 import java.sql.Date;
 
 @Entity
-public class User {
+public class User implements UserInterface {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +39,6 @@ public class User {
         this.balance = 0.0;  
     }
 
-    
     public Long getId() {
         return id;
     }
@@ -101,5 +101,10 @@ public class User {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public void display() {
+        // Implementação do método display, se necessário
     }
 }

@@ -10,11 +10,45 @@ const api = axios.create({
   },
 });
 
-export const getUsers = () => api.get("/users");
-export const registerUser = (user: RegisterUser) => api.post("/users", user);
+export const getUsers = async () => {
+  try {
+    const response = await api.get("/users");
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
 
-export const loginUser = (accountNumber: string, password: string) =>
-  api.post("/users/login", { accountNumber, password });
+export const registerUser = async (user: RegisterUser) => {
+  try {
+    const response = await api.post("/users", user);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
 
-export const deposit = (userId: number, amount: number) =>
-  api.post(`/users/${userId}/deposit`, { amount });
+export const loginUser = async (accountNumber: string, password: string) => {
+  try {
+    const response = await api.post("/users/login", {
+      accountNumber,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const deposit = async (userId: number, amount: number) => {
+  try {
+    const response = await api.post(`/users/${userId}/deposit`, { amount });
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
