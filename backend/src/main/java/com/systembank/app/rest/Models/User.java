@@ -105,6 +105,5 @@ public class User implements UserInterface {
 
     @Override
     public void display() {
-        // Implementação do método display, se necessário
     }
 }

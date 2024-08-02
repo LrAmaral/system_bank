@@ -2,12 +2,18 @@ package com.systembank.app.rest.proxy;
 
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Repo.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 
+@Service
+@Primary
 public class UserServiceImpl implements UserService {
-    
-    @Autowired
-    private UserRepo userRepo;
+
+    private final UserRepo userRepo;
+
+    public UserServiceImpl(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
     public boolean authenticateUser(String username, String password) {

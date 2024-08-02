@@ -5,9 +5,9 @@ import com.systembank.app.rest.Interface.Account;
 import com.systembank.app.rest.Interface.UserInterface; 
 import com.systembank.app.rest.Models.User; 
 import com.systembank.app.rest.proxy.UserService;
-import com.systembank.app.rest.proxy.UserServiceProxy;
 import com.systembank.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,9 @@ public class UserController {
     @Autowired
     private AbstractFactory accountFactory;
 
-    private UserService userService = new UserServiceProxy();
+    @Autowired
+    @Qualifier("userServiceProxy")
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
@@ -69,8 +71,7 @@ public class UserController {
         }
     }
     
-
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginDetails) {
         String username = loginDetails.get("username");
         String password = loginDetails.get("password");
