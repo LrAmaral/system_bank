@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.systembank.app.rest.Models.Slot;
 
@@ -22,36 +23,32 @@ public class SlotManager {
         slots.add(new Slot(200, 10));
     }
 
-    public boolean withdraw(int amount) {
-        List<Slot> usedSlots = new ArrayList<>();
-        int remainingAmount = amount;
+    public boolean withdraw(Map<Integer, Integer> selectedNotes) {
+        List<Slot> tempSlots = new ArrayList<>();
 
         
         for (Slot slot : slots) {
-            int denomination = slot.getDenomination();
-            int quantityNeeded = remainingAmount / denomination;
+            tempSlots.add(new Slot(slot.getDenomination(), slot.getQuantity()));
+        }
 
-            if (quantityNeeded > 0 && slot.isAvailable(quantityNeeded)) {
-                usedSlots.add(new Slot(denomination, quantityNeeded));
-                remainingAmount -= denomination * quantityNeeded;
+        
+        for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
+            int denomination = entry.getKey();
+            int count = entry.getValue();
+
+            for (Slot slot : tempSlots) {
+                if (slot.getDenomination() == denomination) {
+                    if (slot.getQuantity() < count) {
+                        return false; 
+                    }
+                    slot.setQuantity(slot.getQuantity() - count);
+                }
             }
         }
 
         
-        if (remainingAmount == 0) {
-            
-            for (Slot usedSlot : usedSlots) {
-                for (Slot slot : slots) {
-                    if (slot.getDenomination() == usedSlot.getDenomination()) {
-                        slot.setQuantity(slot.getQuantity() - usedSlot.getQuantity());
-                        break;
-                    }
-                }
-            }
-            return true; 
-        } else {
-            return false; 
-        }
+        slots = tempSlots;
+        return true;
     }
 
     public List<Slot> getSlots() {

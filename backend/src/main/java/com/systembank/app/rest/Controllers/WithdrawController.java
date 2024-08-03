@@ -46,7 +46,7 @@ public class WithdrawController {
                     .mapToInt(entry -> entry.getKey() * entry.getValue())
                     .sum();
 
-            if (slotManager.withdraw(totalAmount)) {
+            if (slotManager.withdraw(selectedNotes)) {
                 user.setBalance(user.getBalance() - totalAmount);
                 userService.updateUser(user);
                 return ResponseEntity.ok(new SuccessResponse("Saque realizado com sucesso."));
@@ -60,6 +60,7 @@ public class WithdrawController {
         }
     }
 
+    // Classes ErrorResponse e SuccessResponse
     public static class ErrorResponse {
         private String error;
         private String message;

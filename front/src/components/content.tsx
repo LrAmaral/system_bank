@@ -59,10 +59,9 @@ function Content() {
             total + parseInt(denom) * selectedNotes[parseInt(denom, 10)],
           0
         );
-        
+
         await withdraw(parseInt(user.id, 10), selectedNotes);
         const updatedBalance = (user.balance || 0) - totalAmount;
-        console.log(parseInt(user.id, 10), selectedNotes);
 
         setUser({ ...user, balance: updatedBalance });
         sessionStorage.setItem(

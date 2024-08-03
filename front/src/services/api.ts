@@ -82,10 +82,7 @@ export const withdraw = async (
   selectedNotes: { [denomination: number]: number }
 ) => {
   try {
-    const response = await axios.post(
-      `/slots/withdraw/${userId}`,
-      selectedNotes
-    );
+    const response = await api.post(`/slots/withdraw/${userId}`, selectedNotes);
 
     return response.data;
   } catch (error: unknown) {
