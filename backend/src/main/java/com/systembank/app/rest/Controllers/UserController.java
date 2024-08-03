@@ -83,6 +83,25 @@ public class UserController {
                     .body(new ErrorResponse("Credenciais inválidas", "Usuário ou senha inválidos."));
         }
     }
+
+    @PostMapping("/{userId}/deposit")
+    public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody Map<String, Double> request) {
+        Double amount = request.get("amount");
+        if (amount != null && amount > 0) {
+            User user = userService.findById(userId);
+            if (user != null) {
+                user.setBalance(user.getBalance() + amount);
+                userService.updateUser(user);
+                return ResponseEntity.ok("Depósito realizado com sucesso.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
+            }
+        } else {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Valor inválido", "O valor do depósito deve ser maior que zero."));
+        }
+    }
     
     private String generateAccountNumber() {
         Random random = new Random();

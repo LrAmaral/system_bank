@@ -24,4 +24,13 @@ public class UserServiceImpl implements UserService {
     public User createUser(User user) {
         return userRepo.save(user);
     }
+
+    public User findById(Long userId) {
+        return userRepo.findById(userId).orElse(null);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return userRepo.save(user);
+    }
 }

@@ -21,4 +21,14 @@ public class UserServiceProxy implements UserService {
     public User createUser(User user) {
         return userService.createUser(user);
     }
+
+    @Override
+    public User findById(Long userId) {
+        return userService.findById(userId);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return userService.updateUser(user);
+    }
 }
