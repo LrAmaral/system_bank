@@ -1,8 +1,6 @@
 package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
-import com.systembank.app.rest.Interface.Account;
-import com.systembank.app.rest.Interface.UserInterface; 
 import com.systembank.app.rest.Models.User; 
 import com.systembank.app.rest.proxy.UserService;
 import com.systembank.app.rest.Repo.UserRepo;
@@ -60,8 +58,8 @@ public class UserController {
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
             user.setBalance(0.0);
     
-            Account account = accountFactory.createAccount(accountNumber);
-            UserInterface createdUser = accountFactory.createUser(); 
+            accountFactory.createAccount(accountNumber);
+            accountFactory.createUser(); 
     
             userService.createUser(user);
             return ResponseEntity.ok(new SuccessResponse("Usuário salvo com sucesso. Número da conta: " + accountNumber));
