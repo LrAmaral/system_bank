@@ -1,6 +1,6 @@
-package com.systembank.app.rest.observer;
+package com.systembank.app.rest.Observer;
 
-import com.systembank.app.rest.observable.AccountObservable;
+import com.systembank.app.rest.Observable.AccountObservable;
 
 public interface AccountObserver {
     void update(AccountObservable observable, Double newBalance);

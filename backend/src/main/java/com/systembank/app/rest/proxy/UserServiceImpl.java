@@ -1,4 +1,4 @@
-package com.systembank.app.rest.proxy;
+package com.systembank.app.rest.Proxy;
 
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Repo.UserRepo;

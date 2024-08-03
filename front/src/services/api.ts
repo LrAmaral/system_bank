@@ -14,8 +14,14 @@ export const getUsers = async () => {
   try {
     const response = await api.get("/users");
     return response.data;
-  } catch (error) {
-    console.error("Error", error);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
     throw error;
   }
 };
@@ -24,8 +30,14 @@ export const registerUser = async (user: RegisterUser) => {
   try {
     const response = await api.post("/users", user);
     return response.data;
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
     throw error;
   }
 };
@@ -53,8 +65,53 @@ export const deposit = async (userId: number, amount: number) => {
   try {
     const response = await api.post(`/users/${userId}/deposit`, { amount });
     return response.data;
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
+  }
+};
+
+export const withdraw = async (
+  userId: number,
+  selectedNotes: { [denomination: number]: number }
+) => {
+  try {
+    const response = await axios.post(
+      `/slots/withdraw/${userId}`,
+      selectedNotes
+    );
+
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
+  }
+};
+
+export const fetchAvailableSlots = async () => {
+  try {
+    const response = await api.get("/slots/available-slots");
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
     throw error;
   }
 };

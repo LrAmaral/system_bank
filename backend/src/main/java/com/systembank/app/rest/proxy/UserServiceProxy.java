@@ -1,4 +1,4 @@
-package com.systembank.app.rest.proxy;
+package com.systembank.app.rest.Proxy;
 
 import com.systembank.app.rest.Models.User;
 import org.springframework.beans.factory.annotation.Qualifier;

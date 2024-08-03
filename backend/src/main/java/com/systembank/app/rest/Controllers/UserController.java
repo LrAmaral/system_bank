@@ -1,8 +1,8 @@
 package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
-import com.systembank.app.rest.Models.User; 
-import com.systembank.app.rest.proxy.UserService;
+import com.systembank.app.rest.Models.User;
+import com.systembank.app.rest.Proxy.UserService;
 import com.systembank.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +56,7 @@ public class UserController {
             String accountNumber = generateAccountNumber();
             user.setAccountNumber(accountNumber);
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
-            user.setBalance(0.0);
+            user.setBalance(0.00);
     
             accountFactory.createAccount(accountNumber);
             accountFactory.createUser(); 
@@ -87,20 +87,22 @@ public class UserController {
     @PostMapping("/{userId}/deposit")
     public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody Map<String, Double> request) {
         Double amount = request.get("amount");
-        if (amount != null && amount > 0) {
-            User user = userService.findById(userId);
-            if (user != null) {
-                user.setBalance(user.getBalance() + amount);
-                userService.updateUser(user);
-                return ResponseEntity.ok("Depósito realizado com sucesso.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
-            }
-        } else {
+    
+        if (amount == null || amount <= 0) {
             return ResponseEntity.badRequest()
                     .body(new ErrorResponse("Valor inválido", "O valor do depósito deve ser maior que zero."));
         }
+    
+        User user = userService.findById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
+        }
+    
+        user.setBalance(user.getBalance() + amount);
+        userService.updateUser(user);
+    
+        return ResponseEntity.ok("Depósito realizado com sucesso.");
     }
     
     private String generateAccountNumber() {

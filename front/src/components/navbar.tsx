@@ -19,7 +19,7 @@ function NavBar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
 
     navigate("/");
   };

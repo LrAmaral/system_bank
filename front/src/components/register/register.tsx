@@ -9,6 +9,7 @@ import { RegisterUser } from "../../types/user";
 
 export function Register() {
   const [formData, setFormData] = useState<RegisterUser>({
+    id: "",
     username: "",
     password: "",
     email: "",

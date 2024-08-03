@@ -1,9 +1,9 @@
-package com.systembank.app.rest.observable;
+package com.systembank.app.rest.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.systembank.app.rest.observer.AccountObserver;
+import com.systembank.app.rest.Observer.AccountObserver;
 
 public class AccountObservable {
     private Double accountBalance;

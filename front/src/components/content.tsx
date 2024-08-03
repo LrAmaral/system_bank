@@ -1,27 +1,77 @@
 import { useState, useEffect } from "react";
-import { deposit } from "../services/api";
+import { deposit, withdraw, fetchAvailableSlots } from "../services/api";
 import { RegisterUser } from "../types/user";
 import DepositModal from "./deposit-modal";
+import WithdrawModal from "./withdraw/withdraw";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState<
+    Array<{ denomination: number; quantity: number }>
+  >([]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser) as RegisterUser);
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchSlots = async () => {
+      try {
+        const response = await fetchAvailableSlots();
+        setAvailableSlots(response);
+      } catch (error) {
+        console.error("Failed to fetch available slots:", error);
+      }
+    };
+
+    fetchSlots();
   }, []);
 
   const handleDeposit = async (amount: number) => {
     try {
       if (user) {
         await deposit(parseInt(user.id, 10), amount);
-        setUser({ ...user, balance: (user.balance || 0) + amount });
+        const updatedBalance = (user.balance || 0) + amount;
+
+        setUser({ ...user, balance: updatedBalance });
+        sessionStorage.setItem(
+          "user",
+          JSON.stringify({ ...user, balance: updatedBalance })
+        );
       }
     } catch (error) {
       console.error("Erro ao realizar depósito:", error);
+    }
+  };
+
+  const handleWithdraw = async (selectedNotes: {
+    [denomination: number]: number;
+  }) => {
+    try {
+      if (user) {
+        const totalAmount = Object.keys(selectedNotes).reduce(
+          (total, denom) =>
+            total + parseInt(denom) * selectedNotes[parseInt(denom, 10)],
+          0
+        );
+        
+        await withdraw(parseInt(user.id, 10), selectedNotes);
+        const updatedBalance = (user.balance || 0) - totalAmount;
+        console.log(parseInt(user.id, 10), selectedNotes);
+
+        setUser({ ...user, balance: updatedBalance });
+        sessionStorage.setItem(
+          "user",
+          JSON.stringify({ ...user, balance: updatedBalance })
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao realizar saque:", error);
     }
   };
 
@@ -29,12 +79,12 @@ function Content() {
     <div className="bg-bgColor w-full h-screen p-20 space-y-10">
       <div className="text-2xl font-bold flex flex-col p-4 bg-gray-100 rounded-lg shadow-lg">
         <div className="flex items-center gap-2 mb-2">
-          <p className="text-gray-800">Bom dia,</p>
+          <p className="text-gray-800">Olá,</p>
           <span className="text-red-600 font-bold">
             {user ? user.username : "Carregando..."}
           </span>
         </div>
-        <p className="text-base text-gray-700">
+        <p className="text-sm text-gray-700">
           {user ? (
             <span>
               Conta:{" "}
@@ -56,11 +106,14 @@ function Content() {
             </p>
           </div>
           <div className="space-x-4 font-semibold">
-            <button className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
+            <button
+              onClick={() => setIsWithdrawModalOpen(true)}
+              className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
+            >
               Sacar
             </button>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsDepositModalOpen(true)}
               className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
             >
               Depositar
@@ -93,9 +146,15 @@ function Content() {
         </div>
       </div>
       <DepositModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isDepositModalOpen}
+        onClose={() => setIsDepositModalOpen(false)}
         onDeposit={handleDeposit}
+      />
+      <WithdrawModal
+        isOpen={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        onWithdraw={handleWithdraw}
+        availableSlots={availableSlots}
       />
     </div>
   );
