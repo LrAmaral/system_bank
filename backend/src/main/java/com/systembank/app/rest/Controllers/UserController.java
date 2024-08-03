@@ -61,7 +61,7 @@ public class UserController {
             user.setBalance(0.0);
     
             Account account = accountFactory.createAccount(accountNumber);
-            UserInterface createdUser = accountFactory.createUser(); // Corrigido
+            UserInterface createdUser = accountFactory.createUser(); 
     
             userService.createUser(user);
             return ResponseEntity.ok(new SuccessResponse("Usuário salvo com sucesso. Número da conta: " + accountNumber));
@@ -71,19 +71,21 @@ public class UserController {
         }
     }
     
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginDetails) {
-        String username = loginDetails.get("username");
+        String accountNumber = loginDetails.get("account");
         String password = loginDetails.get("password");
 
-        if (userService.authenticateUser(username, password)) {
-            return ResponseEntity.ok("Usuário autenticado com sucesso");
+        User user = userService.authenticateUser(accountNumber, password);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Credenciais inválidas", "Usuário ou senha inválidos."));
         }
     }
-
+    
     private String generateAccountNumber() {
         Random random = new Random();
         int number = random.nextInt(90000) + 10000;

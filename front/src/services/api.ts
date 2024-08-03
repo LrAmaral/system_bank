@@ -30,15 +30,21 @@ export const registerUser = async (user: RegisterUser) => {
   }
 };
 
-export const loginUser = async (accountNumber: string, password: string) => {
+export const loginUser = async (account: string, password: string) => {
   try {
     const response = await api.post("/users/login", {
-      accountNumber,
+      account,
       password,
     });
     return response.data;
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error response data:", error.response?.data);
+      console.error("Error response status:", error.response?.status);
+      console.error("Error response headers:", error.response?.headers);
+    } else {
+      console.error("Unexpected error:", error);
+    }
     throw error;
   }
 };

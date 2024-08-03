@@ -16,8 +16,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String username, String password) {
-        return userRepo.findByUsernameAndPassword(username, password).isPresent();
+    public User authenticateUser(String accountNumber, String password) {
+        return userRepo.findByAccountNumberAndPassword(accountNumber, password).orElse(null);
     }
 
     @Override
