@@ -3,7 +3,8 @@ package com.systembank.app.rest.Controllers;
 import com.systembank.app.rest.Factory.AbstractFactory;
 import com.systembank.app.rest.Models.Note;
 import com.systembank.app.rest.Models.User;
-import com.systembank.app.rest.Services.NoteService; // Importe o NoteService
+import com.systembank.app.rest.Services.NoteService;
+import com.systembank.app.rest.Services.SlotManager; 
 import com.systembank.app.rest.Proxy.UserService;
 import com.systembank.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -35,7 +37,10 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private NoteService noteService; // Adicione o NoteService aqui
+    private NoteService noteService; 
+
+    @Autowired
+    private SlotManager slotManager;
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
@@ -92,7 +97,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/deposit")
+  @PostMapping("/{userId}/deposit")
     public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody List<Note> notes) {
         User user = userService.findById(userId);
         if (user == null) {
@@ -111,9 +116,15 @@ public class UserController {
 
         user.setBalance(user.getBalance() + totalAmount);
 
+        // Atualiza a quantidade das notas no banco de dados usando NoteService
         for (Note note : notes) {
             noteService.updateNoteQuantity(note.getDenomination(), note.getQuantity());
         }
+
+        // Atualiza a quantidade de notas nos slots
+        Map<Integer, Integer> noteMap = notes.stream()
+                .collect(Collectors.toMap(Note::getDenomination, Note::getQuantity));
+        slotManager.updateSlots(noteMap);
 
         userService.updateUser(user);
 
