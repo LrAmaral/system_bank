@@ -14,15 +14,43 @@ export default function WithdrawModal({
   onWithdraw,
   availableSlots,
 }: WithdrawModalProps) {
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [selectedNotes, setSelectedNotes] = useState<{
     [denomination: number]: number;
   }>({});
+  const [error, setError] = useState<string>("");
 
-  const handleNoteChange = (denomination: number, count: number) => {
-    setSelectedNotes((prev) => ({
-      ...prev,
-      [denomination]: count,
-    }));
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setWithdrawAmount(Number(event.target.value));
+  };
+
+  const calculateNotes = () => {
+    let amount = withdrawAmount;
+    const notes: { [denomination: number]: number } = {};
+
+    const sortedSlots = [...availableSlots].sort(
+      (a, b) => b.denomination - a.denomination
+    );
+
+    for (const slot of sortedSlots) {
+      if (amount <= 0) break;
+      const { denomination, quantity } = slot;
+      const count = Math.min(Math.floor(amount / denomination), quantity);
+      if (count > 0) {
+        notes[denomination] = count;
+        amount -= count * denomination;
+      }
+    }
+
+    if (amount > 0) {
+      setError(
+        "Não é possível sacar o valor solicitado com as notas disponíveis."
+      );
+      setSelectedNotes({});
+    } else {
+      setError("");
+      setSelectedNotes(notes);
+    }
   };
 
   const handleWithdraw = () => {
@@ -37,45 +65,40 @@ export default function WithdrawModal({
           <DialogTitle>Sacar</DialogTitle>
         </DialogHeader>
         <div>
-          {availableSlots
-            .filter((slot) => slot.quantity > 0)
-            .map(({ denomination, quantity }) => (
+          <div className="mb-4">
+            <label htmlFor="withdraw-amount" className="text-lg font-semibold">
+              Valor do Saque
+            </label>
+            <input
+              type="number"
+              id="withdraw-amount"
+              value={withdrawAmount}
+              onChange={handleAmountChange}
+              className="w-full mt-2 p-2 border rounded"
+            />
+          </div>
+          <button
+            onClick={calculateNotes}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          >
+            Calcular Notas
+          </button>
+          {error && <div className="mt-4 text-red-500">{error}</div>}
+          <div>
+            {Object.entries(selectedNotes).map(([denomination, count]) => (
               <div key={denomination} className="mb-4">
                 <p className="text-lg font-semibold">
-                  Nota de R$ {denomination}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {Array.from({ length: quantity }).map((_, index) => (
-                    <button
-                      key={index}
-                      className={`p-2 rounded border ${
-                        (selectedNotes[denomination] || 0) > index
-                          ? "bg-green-500 text-white border-green-700"
-                          : "bg-gray-200 text-gray-700 border-gray-400"
-                      } hover:bg-green-600 hover:text-white`}
-                      onClick={() =>
-                        handleNoteChange(
-                          denomination,
-                          selectedNotes[denomination] === index + 1
-                            ? index
-                            : index + 1
-                        )
-                      }
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Disponível: {quantity}
+                  {count} nota de R$ {denomination}:
                 </p>
               </div>
             ))}
+          </div>
         </div>
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleWithdraw}
             className="bg-green-500 text-white p-2 rounded hover:bg-green-700"
+            disabled={Object.keys(selectedNotes).length === 0}
           >
             Confirmar
           </button>
