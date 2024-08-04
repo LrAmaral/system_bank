@@ -1,4 +1,0 @@
-# Main Colors
-
-#FF6363
-#76ABAE

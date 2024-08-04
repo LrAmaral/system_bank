@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RegisterUser } from "../types/user";
+import { RegisterUser } from "../lib/register";
 
 const API_URL = import.meta.env.VITE_KEY;
 

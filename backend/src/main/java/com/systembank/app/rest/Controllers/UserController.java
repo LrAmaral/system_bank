@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -110,14 +111,17 @@ public class UserController {
 
         user.setBalance(user.getBalance() + totalAmount);
 
-        // Atualiza a quantidade das notas no banco de dados usando NoteService
         for (Note note : notes) {
             noteService.updateNoteQuantity(note.getDenomination(), note.getQuantity());
         }
 
         userService.updateUser(user);
 
-        return ResponseEntity.ok("Depósito realizado com sucesso.");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Depósito realizado com sucesso.");
+        response.put("balance", user.getBalance());
+
+        return ResponseEntity.ok(response);
     }
 
     

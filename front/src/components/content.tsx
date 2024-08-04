@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { deposit, withdraw, fetchAvailableSlots } from "../services/api";
-import { RegisterUser } from "../types/user";
+import { deposit, withdraw, fetchAvailableSlots } from "../api/api";
 import DepositModal from "./deposit-modal";
 import WithdrawModal from "./withdraw/withdraw";
+import { toast } from "./ui/use-toast";
+import { RegisterUser } from "../lib/register";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);
@@ -14,7 +15,7 @@ function Content() {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
-    console.log(storedUser);
+    toast({ description: "Acesso realizado com sucesso!" });
     if (storedUser) {
       setUser(JSON.parse(storedUser) as RegisterUser);
     }
@@ -33,21 +34,34 @@ function Content() {
     fetchSlots();
   }, []);
 
-  const handleDeposit = async (amount: number) => {
+  const handleDeposit = async (notes: { [denomination: string]: number }) => {
     try {
       if (user) {
-        await deposit(parseInt(user.id, 10), amount);
-        const updatedBalance = (user.balance || 0) + amount;
+        const notesArray = Object.entries(notes)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([_, quantity]) => quantity > 0)
+          .map(([denomination, quantity]) => ({
+            denomination: parseInt(denomination, 10),
+            quantity,
+          }));
+
+        const response = await deposit(parseInt(user.id, 10), notesArray);
+        const updatedBalance = response.balance;
 
         setUser({ ...user, balance: updatedBalance });
-        console.log(user);
         sessionStorage.setItem(
           "user",
           JSON.stringify({ ...user, balance: updatedBalance })
         );
+
+        const updatedSlots = await fetchAvailableSlots();
+        setAvailableSlots(updatedSlots);
+
+        toast({ description: "Depósito realizado com sucesso!" });
       }
     } catch (error) {
       console.error("Erro ao realizar depósito:", error);
+      toast({ description: "Erro ao realizar depósito.", type: "error" });
     }
   };
 
@@ -70,9 +84,11 @@ function Content() {
           "user",
           JSON.stringify({ ...user, balance: updatedBalance })
         );
+        toast({ description: "Saque realizado com sucesso!" });
       }
     } catch (error) {
       console.error("Erro ao realizar saque:", error);
+      toast({ description: "Erro ao realizar saque.", type: "error" });
     }
   };
 
