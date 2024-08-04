@@ -14,6 +14,7 @@ function Content() {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
+    console.log(storedUser);
     if (storedUser) {
       setUser(JSON.parse(storedUser) as RegisterUser);
     }
@@ -39,6 +40,7 @@ function Content() {
         const updatedBalance = (user.balance || 0) + amount;
 
         setUser({ ...user, balance: updatedBalance });
+        console.log(user);
         sessionStorage.setItem(
           "user",
           JSON.stringify({ ...user, balance: updatedBalance })

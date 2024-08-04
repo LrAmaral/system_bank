@@ -24,14 +24,9 @@ public class SlotManager {
     }
 
     public boolean withdraw(Map<Integer, Integer> selectedNotes) {
-        List<Slot> tempSlots = new ArrayList<>();
+        List<Slot> tempSlots = new ArrayList<>(slots);
 
-        
-        for (Slot slot : slots) {
-            tempSlots.add(new Slot(slot.getDenomination(), slot.getQuantity()));
-        }
-
-        
+        // Verificar se há notas suficientes para o saque
         for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
             int denomination = entry.getKey();
             int count = entry.getValue();
@@ -39,16 +34,30 @@ public class SlotManager {
             for (Slot slot : tempSlots) {
                 if (slot.getDenomination() == denomination) {
                     if (slot.getQuantity() < count) {
-                        return false; 
+                        return false;  // Não há notas suficientes
                     }
                     slot.setQuantity(slot.getQuantity() - count);
                 }
             }
         }
 
-        
-        slots = tempSlots;
+        slots = tempSlots;  
         return true;
+    }
+
+    public void updateSlots(Map<Integer, Integer> selectedNotes) {
+        for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
+            int denomination = entry.getKey();
+            int count = entry.getValue();
+
+            for (Slot slot : slots) {
+                if (slot.getDenomination() == denomination) {
+                    int newQuantity = slot.getQuantity() - count;
+                    slot.setQuantity(Math.max(newQuantity, 0)); 
+                    break;
+                }
+            }
+        }
     }
 
     public List<Slot> getSlots() {

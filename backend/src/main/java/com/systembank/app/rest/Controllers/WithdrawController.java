@@ -1,14 +1,15 @@
 package com.systembank.app.rest.Controllers;
 
-import com.systembank.app.rest.Services.SlotManager;
 import com.systembank.app.rest.Models.Slot;
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Proxy.UserService;
+import com.systembank.app.rest.Services.SlotManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +47,18 @@ public class WithdrawController {
                     .mapToInt(entry -> entry.getKey() * entry.getValue())
                     .sum();
 
+            if (user.getBalance() < totalAmount) {
+                return ResponseEntity.badRequest()
+                        .body(new ErrorResponse("Saldo insuficiente", "O valor solicitado é maior que o saldo disponível."));
+            }
+
             if (slotManager.withdraw(selectedNotes)) {
                 user.setBalance(user.getBalance() - totalAmount);
                 userService.updateUser(user);
+
+                // Registrar a transação
+                userService.addTransaction(userId, totalAmount, LocalDateTime.now(), "Saque");
+
                 return ResponseEntity.ok(new SuccessResponse("Saque realizado com sucesso."));
             } else {
                 return ResponseEntity.badRequest()

@@ -61,9 +61,12 @@ export const loginUser = async (account: string, password: string) => {
   }
 };
 
-export const deposit = async (userId: number, amount: number) => {
+export const deposit = async (
+  userId: number,
+  notes: { denomination: number; quantity: number }[]
+) => {
   try {
-    const response = await api.post(`/users/${userId}/deposit`, { amount });
+    const response = await api.post(`/users/${userId}/deposit`, notes);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

@@ -1,7 +1,9 @@
 package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
+import com.systembank.app.rest.Models.Note;
 import com.systembank.app.rest.Models.User;
+import com.systembank.app.rest.Services.NoteService; // Importe o NoteService
 import com.systembank.app.rest.Proxy.UserService;
 import com.systembank.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class UserController {
     @Autowired
     @Qualifier("userServiceProxy")
     private UserService userService;
+
+    @Autowired
+    private NoteService noteService; // Adicione o NoteService aqui
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
@@ -76,6 +81,8 @@ public class UserController {
 
         User user = userService.authenticateUser(accountNumber, password);
 
+        System.out.println(user);
+        
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -85,25 +92,48 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody Map<String, Double> request) {
-        Double amount = request.get("amount");
-    
-        if (amount == null || amount <= 0) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Valor inválido", "O valor do depósito deve ser maior que zero."));
-        }
-    
+    public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody List<Note> notes) {
         User user = userService.findById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
         }
-    
-        user.setBalance(user.getBalance() + amount);
+
+        double totalAmount = notes.stream()
+                .mapToDouble(note -> getDenominationValue(note.getDenomination()) * note.getQuantity())
+                .sum();
+
+        if (totalAmount <= 0) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Valor inválido", "O valor total do depósito deve ser maior que zero."));
+        }
+
+        user.setBalance(user.getBalance() + totalAmount);
+
+        // Atualiza a quantidade das notas no banco de dados usando NoteService
+        for (Note note : notes) {
+            noteService.updateNoteQuantity(note.getDenomination(), note.getQuantity());
+        }
+
         userService.updateUser(user);
-    
+
         return ResponseEntity.ok("Depósito realizado com sucesso.");
     }
+
+    
+    private double getDenominationValue(int denomination) {
+        switch (denomination) {
+            case 2: return 2.0;
+            case 5: return 5.0;
+            case 10: return 10.0;
+            case 20: return 20.0;
+            case 50: return 50.0;
+            case 100: return 100.0;
+            case 200: return 200.0;
+            default: throw new IllegalArgumentException("Denominação inválida");
+        }
+    }
+
     
     private String generateAccountNumber() {
         Random random = new Random();
