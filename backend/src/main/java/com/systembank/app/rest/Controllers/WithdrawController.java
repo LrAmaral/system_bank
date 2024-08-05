@@ -56,7 +56,6 @@ public class WithdrawController {
                 user.setBalance(user.getBalance() - totalAmount);
                 userService.updateUser(user);
 
-                // Registrar a transação
                 userService.addTransaction(userId, totalAmount, LocalDateTime.now(), "Saque");
 
                 return ResponseEntity.ok(new SuccessResponse("Saque realizado com sucesso."));
@@ -70,7 +69,6 @@ public class WithdrawController {
         }
     }
 
-    // Classes ErrorResponse e SuccessResponse
     public static class ErrorResponse {
         private String error;
         private String message;
