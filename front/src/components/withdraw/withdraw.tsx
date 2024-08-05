@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -60,11 +66,15 @@ export default function WithdrawModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl mx-auto">
+      <DialogContent
+        className="max-w-xl mx-auto bg-zinc-900 text-white border-none"
+        aria-describedby="dialog-description"
+      >
+        <DialogDescription>Realize o seu saque</DialogDescription>
         <DialogHeader>
           <DialogTitle>Sacar</DialogTitle>
         </DialogHeader>
-        <div>
+        <div id="dialog-description">
           <div className="mb-4">
             <label htmlFor="withdraw-amount" className="text-lg font-semibold">
               Valor do Saque
@@ -74,12 +84,12 @@ export default function WithdrawModal({
               id="withdraw-amount"
               value={withdrawAmount}
               onChange={handleAmountChange}
-              className="w-full mt-2 p-2 border rounded"
+              className="w-full mt-2 p-2 border-none rounded bg-zinc-800"
             />
           </div>
           <button
             onClick={calculateNotes}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+            className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
           >
             Calcular Notas
           </button>
@@ -97,14 +107,14 @@ export default function WithdrawModal({
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleWithdraw}
-            className="bg-green-500 text-white p-2 rounded hover:bg-green-700"
+            className="bg-green-500 text-white p-2 rounded hover:cursor-pointer hover:bg-green-700"
             disabled={Object.keys(selectedNotes).length === 0}
           >
             Confirmar
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
+            className="bg-gray-500 text-white p-2 rounded hover:cursor-pointer hover:bg-gray-700"
           >
             Cancelar
           </button>

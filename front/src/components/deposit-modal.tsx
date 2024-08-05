@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"; // Ajuste o caminho conforme necessário
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog"; // Ajuste o caminho conforme necessário
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -40,7 +46,11 @@ export default function DepositModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent
+        aria-describedby="Depósito"
+        className=" bg-zinc-900 text-white border-none"
+      >
+        <DialogDescription></DialogDescription>
         <DialogHeader>
           <DialogTitle>Depositar Notas</DialogTitle>
         </DialogHeader>
@@ -56,7 +66,7 @@ export default function DepositModal({
                     handleNoteChange(denomination, parseFloat(e.target.value))
                   }
                   placeholder={`Quantidade de R$${denomination}`}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border-none rounded bg-zinc-800"
                 />
               </label>
             </div>
@@ -65,13 +75,13 @@ export default function DepositModal({
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleDeposit}
-            className="bg-green-500 text-white p-2 rounded hover:bg-green-700"
+            className="bg-green-500 text-white p-2 rounded hover:cursor-pointer hover:bg-green-700"
           >
             Confirmar
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
+            className="bg-gray-500 text-white p-2 rounded hover:cursor-pointer hover:bg-gray-700"
           >
             Cancelar
           </button>

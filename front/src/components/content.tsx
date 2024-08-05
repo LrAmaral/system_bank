@@ -4,6 +4,7 @@ import DepositModal from "./deposit-modal";
 import WithdrawModal from "./withdraw/withdraw";
 import { toast } from "./ui/use-toast";
 import { RegisterUser } from "../lib/register";
+import { TransactionHistory } from "./transaction/transaction";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);
@@ -12,6 +13,8 @@ function Content() {
   const [availableSlots, setAvailableSlots] = useState<
     Array<{ denomination: number; quantity: number }>
   >([]);
+
+  const userId = user ? parseInt(user.id, 10) : null;
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
@@ -137,30 +140,7 @@ function Content() {
             </button>
           </div>
         </div>
-        <div className="w-96 h-60 space-y-6 flex flex-col justify-between rounded-lg p-6 bg-zinc-800">
-          <div className="space-y-2">
-            <p className="text-2xl font-semibold">Extrato</p>
-            <div className="space-x-4 font-semibold">
-              <div className="space-y-2 p-2 bg-zinc-900 rounded-lg">
-                <div className="space-x-2 flex">
-                  <span className="border-r-2 border-red-500" />
-                  <p className="text-sm text-zinc-400">-R$100,00</p>
-                </div>
-                <div className="space-x-2 flex">
-                  <span className="border-r-2 border-green-500" />
-                  <p className="text-sm text-zinc-400">+R$125,45</p>
-                </div>
-                <div className="space-x-2 flex">
-                  <span className="border-r-2 border-red-500" />
-                  <p className="text-sm text-zinc-400">-R$150,00</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <button className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white">
-            Ver mais
-          </button>
-        </div>
+        {userId && <TransactionHistory userId={userId} />}
       </div>
       <DepositModal
         isOpen={isDepositModalOpen}

@@ -34,8 +34,6 @@ export function Access() {
     try {
       const response = await loginUser(accountNumber, password);
 
-      console.log(response.data);
-
       if (response.status === 200 || response) {
         sessionStorage.setItem("user", JSON.stringify(response));
 

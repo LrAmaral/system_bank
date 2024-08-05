@@ -116,12 +116,10 @@ public class UserController {
 
         user.setBalance(user.getBalance() + totalAmount);
 
-        // Atualiza a quantidade das notas no banco de dados usando NoteService
         for (Note note : notes) {
             noteService.updateNoteQuantity(note.getDenomination(), note.getQuantity());
         }
 
-        // Atualiza a quantidade de notas nos slots
         Map<Integer, Integer> noteMap = notes.stream()
                 .collect(Collectors.toMap(Note::getDenomination, Note::getQuantity));
         slotManager.updateSlots(noteMap);

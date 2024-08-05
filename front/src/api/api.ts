@@ -14,15 +14,8 @@ export const getUsers = async () => {
   try {
     const response = await api.get("/users");
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -30,34 +23,17 @@ export const registerUser = async (user: RegisterUser) => {
   try {
     const response = await api.post("/users", user);
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
 };
 
 export const loginUser = async (account: string, password: string) => {
   try {
-    const response = await api.post("/users/login", {
-      account,
-      password,
-    });
+    const response = await api.post("/users/login", { account, password });
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -68,15 +44,8 @@ export const deposit = async (
   try {
     const response = await api.post(`/users/${userId}/deposit`, notes);
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -86,17 +55,9 @@ export const withdraw = async (
 ) => {
   try {
     const response = await api.post(`/slots/withdraw/${userId}`, selectedNotes);
-
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -104,14 +65,27 @@ export const fetchAvailableSlots = async () => {
   try {
     const response = await api.get("/slots/available-slots");
     return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error response data:", error.response?.data);
-      console.error("Error response status:", error.response?.status);
-      console.error("Error response headers:", error.response?.headers);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
+  } catch (error) {
+    handleError(error);
   }
+};
+
+export const fetchTransactions = async (userId: number) => {
+  try {
+    const response = await api.get(`/transactions/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+const handleError = (error: unknown) => {
+  if (axios.isAxiosError(error)) {
+    console.error("Error response data:", error.response?.data);
+    console.error("Error response status:", error.response?.status);
+    console.error("Error response headers:", error.response?.headers);
+  } else {
+    console.error("Unexpected error:", error);
+  }
+  throw error;
 };
