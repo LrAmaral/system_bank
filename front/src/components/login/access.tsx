@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "../../components/ui/button";
 import { Input } from "../ui/input";
-import { loginUser } from "../../services/api";
+import { loginUser } from "../../api/api";
 import { toast } from "../ui/use-toast";
 
 export function Access() {
@@ -35,9 +35,8 @@ export function Access() {
       const response = await loginUser(accountNumber, password);
 
       if (response.status === 200 || response) {
-        localStorage.setItem("user", JSON.stringify(response));
+        sessionStorage.setItem("user", JSON.stringify(response));
 
-        toast({ description: "Acesso realizado com sucesso!" });
         navigate("/initial");
       } else {
         toast({

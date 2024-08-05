@@ -1,8 +1,11 @@
 package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
-import com.systembank.app.rest.Models.User; 
-import com.systembank.app.rest.proxy.UserService;
+import com.systembank.app.rest.Models.Note;
+import com.systembank.app.rest.Models.User;
+import com.systembank.app.rest.Services.NoteService;
+import com.systembank.app.rest.Services.SlotManager; 
+import com.systembank.app.rest.Proxy.UserService;
 import com.systembank.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,10 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -30,6 +35,12 @@ public class UserController {
     @Autowired
     @Qualifier("userServiceProxy")
     private UserService userService;
+
+    @Autowired
+    private NoteService noteService; 
+
+    @Autowired
+    private SlotManager slotManager;
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
@@ -56,7 +67,7 @@ public class UserController {
             String accountNumber = generateAccountNumber();
             user.setAccountNumber(accountNumber);
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
-            user.setBalance(0.0);
+            user.setBalance(0.00);
     
             accountFactory.createAccount(accountNumber);
             accountFactory.createUser(); 
@@ -76,6 +87,8 @@ public class UserController {
 
         User user = userService.authenticateUser(accountNumber, password);
 
+        System.out.println(user);
+        
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -83,6 +96,57 @@ public class UserController {
                     .body(new ErrorResponse("Credenciais inválidas", "Usuário ou senha inválidos."));
         }
     }
+
+  @PostMapping("/{userId}/deposit")
+    public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody List<Note> notes) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
+        }
+
+        double totalAmount = notes.stream()
+                .mapToDouble(note -> getDenominationValue(note.getDenomination()) * note.getQuantity())
+                .sum();
+
+        if (totalAmount <= 0) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Valor inválido", "O valor total do depósito deve ser maior que zero."));
+        }
+
+        user.setBalance(user.getBalance() + totalAmount);
+
+        for (Note note : notes) {
+            noteService.updateNoteQuantity(note.getDenomination(), note.getQuantity());
+        }
+
+        Map<Integer, Integer> noteMap = notes.stream()
+                .collect(Collectors.toMap(Note::getDenomination, Note::getQuantity));
+        slotManager.updateSlots(noteMap);
+
+        userService.updateUser(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Depósito realizado com sucesso.");
+        response.put("balance", user.getBalance());
+
+        return ResponseEntity.ok(response);
+    }
+
+    
+    private double getDenominationValue(int denomination) {
+        switch (denomination) {
+            case 2: return 2.0;
+            case 5: return 5.0;
+            case 10: return 10.0;
+            case 20: return 20.0;
+            case 50: return 50.0;
+            case 100: return 100.0;
+            case 200: return 200.0;
+            default: throw new IllegalArgumentException("Denominação inválida");
+        }
+    }
+
     
     private String generateAccountNumber() {
         Random random = new Random();

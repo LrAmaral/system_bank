@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { registerUser } from "../../services/api";
+import { registerUser } from "../../api/api";
 import { toast } from "../ui/use-toast";
-import { RegisterUser } from "../../types/user";
+import { RegisterUser } from "../../lib/register";
 
 export function Register() {
   const [formData, setFormData] = useState<RegisterUser>({
+    id: "",
     username: "",
     password: "",
     email: "",

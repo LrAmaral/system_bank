@@ -1,12 +1,11 @@
 package com.systembank.app.rest.Models;
 
-import com.systembank.app.rest.Interface.UserInterface;  // Importar a interface correta
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.systembank.app.rest.Interface.UserInterface;
+import jakarta.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User implements UserInterface {
@@ -27,7 +26,7 @@ public class User implements UserInterface {
     private String CPF;
 
     @Column
-    private Double balance = 0.0;  
+    private Double balance = 0.0;
 
     @Column
     private String accountNumber;
@@ -35,8 +34,12 @@ public class User implements UserInterface {
     @Column
     private Date createdAt;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference  // Adicione esta anotação para gerenciar a serialização
+    private List<Transaction> transactions = new ArrayList<>();
+
     public User() {
-        this.balance = 0.0;  
+        this.balance = 0.0;
     }
 
     public Long getId() {
@@ -101,6 +104,14 @@ public class User implements UserInterface {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Override
