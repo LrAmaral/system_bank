@@ -14,7 +14,7 @@ interface TransactionHistoryModalProps {
   transactions: Array<{
     id: number;
     amount: number;
-    type: "deposit" | "withdrawal";
+    type: "Depósito" | "Saque";
     date: string;
   }>;
 }
@@ -39,6 +39,8 @@ export default function TransactionHistoryModal({
     currentPage * PAGE_SIZE
   );
 
+  console.log(transactions)
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -62,12 +64,12 @@ export default function TransactionHistoryModal({
               >
                 <span
                   className={`font-semibold ${
-                    transaction.type === "deposit"
+                    transaction.type === "Depósito"
                       ? "text-green-500"
                       : "text-red-500"
                   }`}
                 >
-                  {transaction.type === "deposit" ? "+" : "-"} R$
+                  {transaction.type === "Depósito" ? "+" : "-"} R$
                   {transaction.amount.toFixed(2)}
                 </span>
                 <span className="text-sm text-zinc-400">

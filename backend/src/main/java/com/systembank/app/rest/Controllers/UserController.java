@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public class UserController {
         }
     }
 
-  @PostMapping("/{userId}/deposit")
+    @PostMapping("/{userId}/deposit")
     public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody List<Note> notes) {
         User user = userService.findById(userId);
         if (user == null) {
@@ -126,6 +127,8 @@ public class UserController {
 
         userService.updateUser(user);
 
+        userService.addTransaction(userId, (int) totalAmount, LocalDateTime.now(), "Depósito");
+
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Depósito realizado com sucesso.");
         response.put("balance", user.getBalance());
@@ -133,7 +136,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    
     private double getDenominationValue(int denomination) {
         switch (denomination) {
             case 2: return 2.0;
@@ -147,7 +149,6 @@ public class UserController {
         }
     }
 
-    
     private String generateAccountNumber() {
         Random random = new Random();
         int number = random.nextInt(90000) + 10000;
