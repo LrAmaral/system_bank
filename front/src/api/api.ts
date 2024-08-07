@@ -21,6 +21,7 @@ export const getUsers = async () => {
 
 export const registerUser = async (user: RegisterUser) => {
   try {
+    console.log(user);
     const response = await api.post("/users", user);
     return response.data;
   } catch (error) {

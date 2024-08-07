@@ -105,11 +105,19 @@ function Content() {
             {user ? user.username : "Carregando..."}
           </span>
         </div>
-        <p className="text-sm text-white">
+        <p className="text-sm text-white space-y-2 flex flex-col">
+          {user ? (
+            <span>
+              Nº da conta:{" "}
+              <strong className="text-red-500">{user.accountNumber}</strong>
+            </span>
+          ) : (
+            "Carregando..."
+          )}
           {user ? (
             <span>
               Conta:{" "}
-              <strong className="text-red-500">{user.accountNumber}</strong>
+              <strong className="text-red-500">{user.accountType}</strong>
             </span>
           ) : (
             "Carregando..."

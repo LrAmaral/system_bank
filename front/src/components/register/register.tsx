@@ -68,6 +68,7 @@ export function Register() {
       value = value.slice(0, 11);
     }
 
+    console.log(`handleCPFChange - value: ${value}`);
     setFormData({
       ...formData,
       cpf: value,
@@ -76,7 +77,8 @@ export function Register() {
 
   const validateEmail = (value: string) => {
     const re = /\S+@\S+\.\S+/;
-    setIsEmailValid(re.test(value));
+    const isValid = re.test(value);
+    setIsEmailValid(isValid);
   };
 
   const isSequential = (password: string) => {
@@ -97,11 +99,12 @@ export function Register() {
       regex.test(password) &&
       !/(.)\1{2,}/.test(password) &&
       !isSequential(password);
+
     setIsPasswordValid(isValid);
     return isValid;
   };
 
-  const accessRoute = async (e: FormEvent<HTMLFormElement>) => {
+  const accessRoute = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const isPasswordValid = validatePassword(formData.password);
@@ -127,23 +130,29 @@ export function Register() {
     accountType: string,
     accountStatus: string
   ) => {
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       accountType,
       accountStatus,
-    });
-    setIsDialogOpen(false);
+    }));
 
-    try {
-      const response = await registerUser({
-        ...formData,
-        createdAt: new Date().toISOString().split("T")[0],
-      });
-      sessionStorage.setItem("user", JSON.stringify(response));
+    if (accountType && accountStatus) {
+      setIsDialogOpen(false);
 
-      navigate("/initial");
-    } catch (error) {
-      toast({ description: "Erro ao registrar usuário. Tente novamente." });
+      try {
+        const response = await registerUser({
+          ...formData,
+          createdAt: new Date().toISOString().split("T")[0],
+          accountType,
+          accountStatus,
+        });
+        sessionStorage.setItem("user", JSON.stringify(response));
+
+        navigate("/initial");
+      } catch (error) {
+        console.error("handleAccountSelection - Error: ", error);
+        toast({ description: "Erro ao registrar usuário. Tente novamente." });
+      }
     }
   };
 
@@ -238,8 +247,12 @@ export function Register() {
       </form>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-zinc-800 border-none text-white">
-          <TypeAccount onSelect={handleAccountSelection} />
+        <DialogContent className="bg-zinc-800 p-4">
+          <TypeAccount
+            onSelect={(accountType, accountStatus) => {
+              handleAccountSelection(accountType, accountStatus);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </>
