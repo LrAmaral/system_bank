@@ -35,6 +35,11 @@ public class UserServiceProxy implements UserService {
     }
 
     @Override
+    public User selectStatus(User user) {
+        return userService.selectStatus(user);
+    }
+
+    @Override
     public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
         userService.addTransaction(userId, amount, date, type);
     }

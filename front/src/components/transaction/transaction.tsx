@@ -9,7 +9,7 @@ interface UserProps {
 interface Transaction {
   id: number;
   amount: number;
-  type: "deposit" | "withdrawal";
+  type: "Depósito" | "Saque";
   date: string;
 }
 
@@ -50,21 +50,23 @@ export const TransactionHistory = ({ userId }: UserProps) => {
         <p className="text-2xl font-semibold">Extrato</p>
         <div className="space-x-4 font-semibold">
           <div className="space-y-2 p-2 bg-zinc-900 rounded-lg">
-            {transactions.slice(0, visibleCount).map((transaction) => (
-              <div key={transaction.id} className="space-x-2 flex">
-                <span
-                  className={`border-r-2 ${
-                    transaction.type === "deposit"
-                      ? "border-green-500"
-                      : "border-red-500"
-                  }`}
-                />
-                <p className="text-sm text-zinc-400">
-                  {transaction.type === "deposit" ? "+" : "-"} R$
-                  {transaction.amount.toFixed(2)}
-                </p>
-              </div>
-            ))}
+            {transactions
+              ? transactions.slice(0, visibleCount).map((transaction) => (
+                  <div key={transaction.id} className="space-x-2 flex">
+                    <span
+                      className={`border-r-2 ${
+                        transaction.type === "Depósito"
+                          ? "border-green-500"
+                          : "border-red-500"
+                      }`}
+                    />
+                    <p className="text-sm text-zinc-400">
+                      {transaction.type === "Depósito" ? "+" : "-"} R$
+                      {transaction.amount.toFixed(2)}
+                    </p>
+                  </div>
+                ))
+              : null}
           </div>
         </div>
       </div>

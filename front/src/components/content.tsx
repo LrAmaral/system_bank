@@ -18,6 +18,7 @@ function Content() {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
+
     toast({ description: "Acesso realizado com sucesso!" });
     if (storedUser) {
       setUser(JSON.parse(storedUser) as RegisterUser);
@@ -97,14 +98,14 @@ function Content() {
 
   return (
     <div className="bg-bgColor w-full h-screen p-20 space-y-10">
-      <div className="text-2xl font-bold flex flex-col p-4 bg-gray-100 rounded-lg shadow-lg">
+      <div className="text-2xl font-bold flex flex-col p-4 bg-zinc-800 rounded-lg shadow-lg">
         <div className="flex items-center gap-2 mb-2">
-          <p className="text-gray-800">Olá,</p>
-          <span className="text-red-600 font-bold">
+          <p className="text-white">Olá,</p>
+          <span className="text-red-500 font-bold">
             {user ? user.username : "Carregando..."}
           </span>
         </div>
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-white">
           {user ? (
             <span>
               Conta:{" "}

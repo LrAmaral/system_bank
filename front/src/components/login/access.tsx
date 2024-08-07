@@ -66,7 +66,7 @@ export function Access() {
           </Label>
           <Input
             id="conta"
-            className="text-black w-full"
+            className="p-2 bg-zinc-800 text-white border-zinc-600 flex justify-between items-center"
             placeholder="Conta"
             value={accountNumber}
             onChange={handleInputChange}
@@ -79,7 +79,7 @@ export function Access() {
           <Input
             id="password"
             type="password"
-            className="text-black w-full"
+            className="p-2 bg-zinc-800 text-white border-zinc-600 flex justify-between items-center"
             placeholder="Senha"
             value={password}
             onChange={handleInputChange}

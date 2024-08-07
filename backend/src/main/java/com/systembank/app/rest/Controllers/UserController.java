@@ -55,8 +55,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
-        String password = user.getPassword();
+    public ResponseEntity<?> saveUser(@RequestBody Map<String, Object> userMap) {
+        String password = (String) userMap.get("password");
         if (!isPasswordValid(password)) {
             return ResponseEntity.badRequest().body(new ErrorResponse(
                     "Senha inválida",
@@ -65,16 +65,27 @@ public class UserController {
         }
     
         try {
+            User user = new User();
+            user.setUsername((String) userMap.get("username"));
+            user.setPassword(password);
+            user.setEmail((String) userMap.get("email"));
+            user.setCpf((String) userMap.get("CPF"));
+            user.setAccountType((String) userMap.get("accountType"));
+            user.setAccountStatus((String) userMap.get("accountStatus"));
+    
             String accountNumber = generateAccountNumber();
             user.setAccountNumber(accountNumber);
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
             user.setBalance(0.00);
     
             accountFactory.createAccount(accountNumber);
-            accountFactory.createUser(); 
+            accountFactory.createUser();
     
             userService.createUser(user);
-            return ResponseEntity.ok(new SuccessResponse("Usuário salvo com sucesso. Número da conta: " + accountNumber));
+
+            User userAuth = userService.authenticateUser(accountNumber, password);
+
+            return ResponseEntity.ok(userAuth);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Erro ao salvar usuário", e.getMessage()));
@@ -88,8 +99,6 @@ public class UserController {
 
         User user = userService.authenticateUser(accountNumber, password);
 
-        System.out.println(user);
-        
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {

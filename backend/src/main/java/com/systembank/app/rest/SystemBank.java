@@ -11,4 +11,3 @@ public class SystemBank {
         SpringApplication.run(SystemBank.class, args);
     }
 }
-

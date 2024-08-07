@@ -39,6 +39,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User selectStatus(User user) {
+        return userRepo.findById(user.getId()).orElse(null);
+    }
+
+    @Override
     public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
         User user = findById(userId);
         if (user != null) {
