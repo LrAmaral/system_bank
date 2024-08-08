@@ -40,6 +40,11 @@ public class UserServiceProxy implements UserService {
     }
 
     @Override
+    public User getUserById(Long id) {
+        return userService.findById(id);
+    }
+
+    @Override
     public User selectStatus(User user) {
         return userService.selectStatus(user);
     }

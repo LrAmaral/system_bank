@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { deposit, withdraw, fetchAvailableSlots } from "../api/api";
+import { deposit, withdraw, fetchAvailableSlots, fetchUser } from "../api/api";
 import DepositModal from "./deposit-modal";
 import WithdrawModal from "./withdraw/withdraw";
 import { toast } from "./ui/use-toast";
@@ -40,56 +40,11 @@ function Content() {
     fetchSlots();
   }, []);
 
-  const handleTransfer = async (recipientAccount: string, amount: number) => {
-    try {
-      if (!user) throw new Error("Usuário não encontrado.");
-
-      // Verifique se a conta destinatária é válida
-      if (recipientAccount.trim() === "") {
-        toast({
-          description: "O destinatário deve ser informado.",
-          type: "error",
-        });
-        return;
-      }
-
-      // Verifique se o valor da transferência é válido
-      if (amount <= 0) {
-        toast({
-          description: "O valor da transferência deve ser maior que zero.",
-          type: "error",
-        });
-        return;
-      }
-
-      if (amount > user.balance) {
-        toast({
-          description:
-            "O valor da transferência não pode ser maior que o saldo disponível.",
-          type: "error",
-        });
-        return;
-      }
-
-      // Aqui você deve implementar a lógica real de transferência
-      // Exemplo:
-      // await transferMoney(user.id, recipientAccount, amount);
-
-      toast({ description: "Transferência realizada com sucesso!" });
-      setIsTransferModalOpen(false);
-    } catch (error: unknown) {
-      console.error("Erro ao realizar a transferência:", error);
-      toast({
-        description: "Erro ao realizar a transferência.",
-        type: "error",
-      });
-    }
-  };
-
   const handleDeposit = async (notes: { [denomination: string]: number }) => {
     try {
       if (user) {
         const notesArray = Object.entries(notes)
+
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           .filter(([_, quantity]) => quantity > 0)
           .map(([denomination, quantity]) => ({
@@ -141,6 +96,25 @@ function Content() {
     } catch (error) {
       console.error("Erro ao realizar saque:", error);
       toast({ description: "Erro ao realizar saque.", type: "error" });
+    }
+  };
+
+  const handleTransferSuccess = async () => {
+    try {
+      if (user) {
+        const updatedUser = await fetchUser(user.id);
+        console.log(updatedUser.data)
+        setUser(updatedUser);
+        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+
+        const updatedSlots = await fetchAvailableSlots();
+        setAvailableSlots(updatedSlots);
+
+        toast({ description: "Transferência realizada com sucesso!" });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar informações após transferência:", error);
+      toast({ description: "Erro ao atualizar informações.", type: "error" });
     }
   };
 
@@ -235,8 +209,9 @@ function Content() {
       <TransferModal
         isOpen={isTransferModalOpen}
         onClose={() => setIsTransferModalOpen(false)}
-        onTransfer={handleTransfer}
         balance={user?.balance}
+        userId={user?.id}
+        onTransferSuccess={handleTransferSuccess}
       />
     </div>
   );

@@ -21,11 +21,43 @@ export const getUsers = async () => {
 
 export const registerUser = async (user: RegisterUser) => {
   try {
-    console.log(user);
     const response = await api.post("/users", user);
     return response.data;
   } catch (error) {
     handleError(error);
+  }
+};
+
+export const getCPFUser = async (cpf: string) => {
+  try {
+    const response = await api.get(`/users/cpf/${cpf}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const transferFunds = async (transferData: {
+  senderId?: string;
+  recipientCpf: string;
+  amount: number;
+}) => {
+  try {
+    const response = await api.post("/users/transfer", transferData);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw error;
+  }
+};
+
+export const fetchUser = async (userId: string) => {
+  try {
+    const response = await api.get(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar usuário:", error);
+    throw error;
   }
 };
 

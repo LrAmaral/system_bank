@@ -2,6 +2,7 @@ package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
 import com.systembank.app.rest.Models.Note;
+import com.systembank.app.rest.Models.TransferRequest;
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Services.NoteService;
 import com.systembank.app.rest.Services.SlotManager; 
@@ -18,11 +19,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -57,17 +57,69 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{cpf}")
-    public ResponseEntity<?> findByCPF(@RequestParam String cpf) {
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<?> findByCPF(@PathVariable String cpf) {
         try {
-            List<User> users = userRepo.findAll();
-            return ResponseEntity.ok(users);
+            Optional<User> user = userRepo.findByCpf(cpf);
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("Usuário não encontrado", "CPF não corresponde a nenhum usuário."));
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Erro ao buscar usuários", e.getMessage()));
+                    .body(new ErrorResponse("Erro ao buscar usuário", e.getMessage()));
         }
     }
 
+    @PostMapping("/transfer")
+    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
+        if (transferRequest.getSenderId() == null) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("ID de remetente não fornecido", "O ID do remetente não pode ser nulo."));
+        }
+    
+        try {
+            Optional<User> sender = userRepo.findById(transferRequest.getSenderId());
+            Optional<User> recipient = userRepo.findByCpf(transferRequest.getRecipientCpf());
+
+            if (sender.isPresent() && recipient.isPresent()) {
+                User senderUser = sender.get();
+                User recipientUser = recipient.get();
+
+                if (senderUser.getBalance() < transferRequest.getAmount()) {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("Saldo insuficiente", "Você não tem saldo suficiente para essa transferência."));
+                }
+
+                senderUser.setBalance(senderUser.getBalance() - transferRequest.getAmount());
+                recipientUser.setBalance(recipientUser.getBalance() + transferRequest.getAmount());
+
+                userRepo.save(senderUser);
+                userRepo.save(recipientUser);
+
+                return ResponseEntity.ok(new SuccessResponse("Transferência realizada com sucesso"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Usuário não encontrado", "Verifique o CPF do destinatário."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erro ao realizar transferência", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    
     @PostMapping
     public ResponseEntity<?> saveUser(@RequestBody Map<String, Object> userMap) {
         String password = (String) userMap.get("password");
