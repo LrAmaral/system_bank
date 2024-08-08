@@ -114,14 +114,24 @@ function Content() {
           ) : (
             "Carregando..."
           )}
-          {user ? (
-            <span>
-              Conta:{" "}
-              <strong className="text-red-500">{user.accountType}</strong>
-            </span>
-          ) : (
-            "Carregando..."
-          )}
+          <div className="flex gap-2 text-xs">
+            {user ? (
+              <span>
+                Conta:{" "}
+                <strong className="text-red-500">{user.accountType}</strong>
+              </span>
+            ) : (
+              "Carregando..."
+            )}
+            {user ? (
+              <span>
+                Tipo da conta:{" "}
+                <strong className="text-red-500">{user.accountStatus}</strong>
+              </span>
+            ) : (
+              "Carregando..."
+            )}
+          </div>
         </p>
       </div>
       <div className="flex gap-10">
@@ -137,7 +147,12 @@ function Content() {
           <div className="space-x-4 font-semibold">
             <button
               onClick={() => setIsWithdrawModalOpen(true)}
-              className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
+              className={`cursor-pointer text-white w-40 p-2 rounded-lg transition ease-in-out duration-300 font-medium ${
+                user?.balance === 0
+                  ? "bg-red-600 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-700 hover:text-white"
+              }`}
+              disabled={user?.balance === 0}
             >
               Sacar
             </button>
@@ -161,6 +176,7 @@ function Content() {
         onClose={() => setIsWithdrawModalOpen(false)}
         onWithdraw={handleWithdraw}
         availableSlots={availableSlots}
+        balance={user?.balance}
       />
     </div>
   );
