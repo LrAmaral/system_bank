@@ -30,12 +30,27 @@ public class UserServiceProxy implements UserService {
     }
 
     @Override
+    public User findByCPF(String cpf) {
+        return userService.findByCPF(cpf);
+    }
+
+    @Override
     public User updateUser(User user) {
         return userService.updateUser(user);
     }
 
     @Override
-    public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
+    public User getUserById(Long id) {
+        return userService.findById(id);
+    }
+
+    @Override
+    public User selectStatus(User user) {
+        return userService.selectStatus(user);
+    }
+
+    @Override
+    public void addTransaction(Long userId, double amount, LocalDateTime date, String type) {
         userService.addTransaction(userId, amount, date, type);
     }
 }

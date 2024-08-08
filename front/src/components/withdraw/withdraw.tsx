@@ -12,6 +12,7 @@ interface WithdrawModalProps {
   onClose: () => void;
   onWithdraw: (selectedNotes: { [denomination: number]: number }) => void;
   availableSlots: Array<{ denomination: number; quantity: number }>;
+  balance?: number | undefined;
 }
 
 export default function WithdrawModal({
@@ -19,6 +20,7 @@ export default function WithdrawModal({
   onClose,
   onWithdraw,
   availableSlots,
+  balance,
 }: WithdrawModalProps) {
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [selectedNotes, setSelectedNotes] = useState<{
@@ -31,6 +33,23 @@ export default function WithdrawModal({
   };
 
   const calculateNotes = () => {
+    if (balance === undefined) {
+      setError("Saldo não disponível.");
+      return;
+    }
+
+    if (withdrawAmount <= 0) {
+      setError("O valor do saque deve ser maior que 0.");
+      setSelectedNotes({});
+      return;
+    }
+
+    if (withdrawAmount > balance) {
+      setError("O valor do saque não pode ser maior que o saldo disponível.");
+      setSelectedNotes({});
+      return;
+    }
+
     let amount = withdrawAmount;
     const notes: { [denomination: number]: number } = {};
 
@@ -60,6 +79,26 @@ export default function WithdrawModal({
   };
 
   const handleWithdraw = () => {
+    if (balance === undefined) {
+      setError("Saldo não disponível.");
+      return;
+    }
+
+    if (withdrawAmount <= 0) {
+      setError("O valor do saque deve ser maior que 0.");
+      return;
+    }
+
+    if (withdrawAmount > balance) {
+      setError("O valor do saque não pode ser maior que o saldo disponível.");
+      return;
+    }
+
+    if (Object.keys(selectedNotes).length === 0) {
+      setError("Por favor, calcule as notas antes de confirmar o saque.");
+      return;
+    }
+
     onWithdraw(selectedNotes);
     onClose();
   };
@@ -108,10 +147,16 @@ export default function WithdrawModal({
           <button
             onClick={handleWithdraw}
             className="bg-green-500 text-white p-2 rounded hover:cursor-pointer hover:bg-green-700"
-            disabled={Object.keys(selectedNotes).length === 0}
+            disabled={
+              withdrawAmount <= 0 ||
+              balance === undefined ||
+              withdrawAmount > balance ||
+              Object.keys(selectedNotes).length === 0
+            }
           >
             Confirmar
           </button>
+
           <button
             onClick={onClose}
             className="bg-gray-500 text-white p-2 rounded hover:cursor-pointer hover:bg-gray-700"

@@ -1,13 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Home, ArrowLeftFromLine } from "lucide-react";
+import { ArrowLeftFromLine } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const info = [
-  {
-    icon: <Home />,
-    text: "Página Inicial",
-    route: "/initial",
-  },
   {
     icon: <ArrowLeftFromLine />,
     text: "Sair",

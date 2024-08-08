@@ -9,7 +9,7 @@ interface UserProps {
 interface Transaction {
   id: number;
   amount: number;
-  type: "deposit" | "withdrawal";
+  type: "Depósito" | "Saque" | "Transferência";
   date: string;
 }
 
@@ -49,23 +49,36 @@ export const TransactionHistory = ({ userId }: UserProps) => {
       <div className="space-y-2">
         <p className="text-2xl font-semibold">Extrato</p>
         <div className="space-x-4 font-semibold">
-          <div className="space-y-2 p-2 bg-zinc-900 rounded-lg">
-            {transactions.slice(0, visibleCount).map((transaction) => (
-              <div key={transaction.id} className="space-x-2 flex">
-                <span
-                  className={`border-r-2 ${
-                    transaction.type === "deposit"
-                      ? "border-green-500"
-                      : "border-red-500"
-                  }`}
-                />
-                <p className="text-sm text-zinc-400">
-                  {transaction.type === "deposit" ? "+" : "-"} R$
-                  {transaction.amount.toFixed(2)}
-                </p>
-              </div>
-            ))}
-          </div>
+          {transactions.length > 0 ? (
+            <div className="space-y-2 p-2 bg-zinc-900 rounded-lg">
+              {transactions.slice(0, visibleCount).map((transaction) => (
+                <div key={transaction.id} className="space-x-2 flex">
+                  <span
+                    className={`border-r-2 ${
+                      transaction.type === "Depósito"
+                        ? "border-green-500"
+                        : transaction.type === "Saque"
+                        ? "border-red-500"
+                        : "border-blue-500"
+                    }`}
+                  />
+                  <div className="text-sm text-zinc-400">
+                    {transaction.type === "Depósito"
+                      ? "+"
+                      : transaction.type === "Saque"
+                      ? "-"
+                      : "~"}{" "}
+                    R$
+                    {transaction.amount.toFixed(2)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-red-500">
+              Ainda não há transações para esta conta.
+            </p>
+          )}
         </div>
       </div>
       {visibleCount < transactions.length && (
@@ -76,7 +89,6 @@ export const TransactionHistory = ({ userId }: UserProps) => {
           Ver mais
         </button>
       )}
-
       <TransactionHistoryModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

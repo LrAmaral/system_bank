@@ -7,4 +7,6 @@ export interface RegisterUser {
   createdAt?: string;
   accountNumber?: string;
   balance: number;
+  accountType?: string;
+  accountStatus?: string;
 }

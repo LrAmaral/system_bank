@@ -5,7 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog"; // Ajuste o caminho conforme necessário
+} from "./ui/dialog";
 
 interface DepositModalProps {
   isOpen: boolean;

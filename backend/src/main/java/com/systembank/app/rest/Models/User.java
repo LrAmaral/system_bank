@@ -23,7 +23,7 @@ public class User implements UserInterface {
     private String email;
 
     @Column
-    private String CPF;
+    private String cpf;
 
     @Column
     private Double balance = 0.0;
@@ -32,10 +32,16 @@ public class User implements UserInterface {
     private String accountNumber;
 
     @Column
+    private String accountType;
+
+    @Column
+    private String accountStatus;
+
+    @Column
     private Date createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-    @JsonManagedReference  // Adicione esta anotação para gerenciar a serialização
+    @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
 
     public User() {
@@ -75,11 +81,11 @@ public class User implements UserInterface {
     }
 
     public String getCpf() {
-        return CPF;
+        return cpf;
     }
 
-    public void setCpf(String CPF) {
-        this.CPF = CPF;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Double getBalance() {
@@ -96,6 +102,22 @@ public class User implements UserInterface {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
     }
 
     public Date getCreatedAt() {

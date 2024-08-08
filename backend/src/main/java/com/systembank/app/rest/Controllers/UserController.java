@@ -2,6 +2,7 @@ package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Factory.AbstractFactory;
 import com.systembank.app.rest.Models.Note;
+import com.systembank.app.rest.Models.TransferRequest;
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Services.NoteService;
 import com.systembank.app.rest.Services.SlotManager; 
@@ -18,9 +19,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -54,9 +57,75 @@ public class UserController {
         }
     }
 
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<?> findByCPF(@PathVariable String cpf) {
+        try {
+            Optional<User> user = userRepo.findByCpf(cpf);
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("Usuário não encontrado", "CPF não corresponde a nenhum usuário."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erro ao buscar usuário", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
+        if (transferRequest.getSenderId() == null || transferRequest.getRecipientCpf() == null || transferRequest.getAmount() <= 0) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Dados inválidos", "ID do remetente, CPF do destinatário e valor devem ser fornecidos."));
+        }
+
+        try {
+            Optional<User> sender = userRepo.findById(transferRequest.getSenderId());
+            Optional<User> recipient = userRepo.findByCpf(transferRequest.getRecipientCpf());
+
+            if (sender.isPresent() && recipient.isPresent()) {
+                User senderUser = sender.get();
+                User recipientUser = recipient.get();
+
+                if (senderUser.getBalance() < transferRequest.getAmount()) {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("Saldo insuficiente", "Você não tem saldo suficiente para essa transferência."));
+                }
+
+                senderUser.setBalance(senderUser.getBalance() - transferRequest.getAmount());
+                recipientUser.setBalance(recipientUser.getBalance() + transferRequest.getAmount());
+
+                userRepo.save(senderUser);
+                userRepo.save(recipientUser);
+
+                userService.addTransaction(senderUser.getId(), transferRequest.getAmount(), LocalDateTime.now(), "Transferência (Enviada)");
+                userService.addTransaction(recipientUser.getId(), transferRequest.getAmount(), LocalDateTime.now(), "Transferência (Recebida)");
+
+                return ResponseEntity.ok(new SuccessResponse("Transferência realizada com sucesso"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Usuário não encontrado", "Verifique o CPF do destinatário."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erro ao realizar transferência", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    
     @PostMapping
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
-        String password = user.getPassword();
+    public ResponseEntity<?> saveUser(@RequestBody Map<String, Object> userMap) {
+        String password = (String) userMap.get("password");
         if (!isPasswordValid(password)) {
             return ResponseEntity.badRequest().body(new ErrorResponse(
                     "Senha inválida",
@@ -65,16 +134,27 @@ public class UserController {
         }
     
         try {
+            User user = new User();
+            user.setUsername((String) userMap.get("username"));
+            user.setPassword(password);
+            user.setEmail((String) userMap.get("email"));
+            user.setCpf((String) userMap.get("cpf"));
+            user.setAccountType((String) userMap.get("accountType"));
+            user.setAccountStatus((String) userMap.get("accountStatus"));
+    
             String accountNumber = generateAccountNumber();
             user.setAccountNumber(accountNumber);
             user.setCreatedAt(new java.sql.Date(new Date().getTime()));
             user.setBalance(0.00);
     
             accountFactory.createAccount(accountNumber);
-            accountFactory.createUser(); 
+            accountFactory.createUser();
     
             userService.createUser(user);
-            return ResponseEntity.ok(new SuccessResponse("Usuário salvo com sucesso. Número da conta: " + accountNumber));
+
+            User userAuth = userService.authenticateUser(accountNumber, password);
+
+            return ResponseEntity.ok(userAuth);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Erro ao salvar usuário", e.getMessage()));
@@ -88,8 +168,6 @@ public class UserController {
 
         User user = userService.authenticateUser(accountNumber, password);
 
-        System.out.println(user);
-        
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -135,6 +213,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+    
 
     private double getDenominationValue(int denomination) {
         switch (denomination) {

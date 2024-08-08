@@ -11,7 +11,7 @@ public class Transaction {
     private Long id;
 
     @Column
-    private int amount;
+    private double amount; // Mudar para double
 
     @Column
     private LocalDateTime date;
@@ -21,13 +21,13 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference 
+    @JsonBackReference
     private User user;
 
     public Transaction() {
     }
 
-    public Transaction(int amount, LocalDateTime date, String type, User user) {
+    public Transaction(double amount, LocalDateTime date, String type, User user) {
         this.amount = amount;
         this.date = date;
         this.type = type;
@@ -42,12 +42,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public int getAmount() {
-        return amount;
+    public double getAmount() {
+        return amount; // Atualizar tipo
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setAmount(double amount) {
+        this.amount = amount; // Atualizar tipo
     }
 
     public LocalDateTime getDate() {

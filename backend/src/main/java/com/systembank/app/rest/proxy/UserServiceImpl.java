@@ -34,12 +34,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByCPF(String cpf) {
+        return userRepo.findByCpf(cpf).orElse(null);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userRepo.findById(id).orElse(null);
+    }
+
+    @Override
     public User updateUser(User user) {
         return userRepo.save(user);
     }
 
     @Override
-    public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
+    public User selectStatus(User user) {
+        return userRepo.findById(user.getId()).orElse(null);
+    }
+
+    @Override
+    public void addTransaction(Long userId, double amount, LocalDateTime date, String type) {
         User user = findById(userId);
         if (user != null) {
             Transaction transaction = new Transaction(amount, date, type, user);
@@ -47,4 +62,5 @@ public class UserServiceImpl implements UserService {
             updateUser(user);
         }
     }
+
 }
