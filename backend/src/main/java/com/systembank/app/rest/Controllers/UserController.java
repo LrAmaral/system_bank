@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -54,6 +57,17 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{cpf}")
+    public ResponseEntity<?> findByCPF(@RequestParam String cpf) {
+        try {
+            List<User> users = userRepo.findAll();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erro ao buscar usuários", e.getMessage()));
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> saveUser(@RequestBody Map<String, Object> userMap) {
         String password = (String) userMap.get("password");
@@ -69,7 +83,7 @@ public class UserController {
             user.setUsername((String) userMap.get("username"));
             user.setPassword(password);
             user.setEmail((String) userMap.get("email"));
-            user.setCpf((String) userMap.get("CPF"));
+            user.setCpf((String) userMap.get("cpf"));
             user.setAccountType((String) userMap.get("accountType"));
             user.setAccountStatus((String) userMap.get("accountStatus"));
     
@@ -144,6 +158,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+    
 
     private double getDenominationValue(int denomination) {
         switch (denomination) {

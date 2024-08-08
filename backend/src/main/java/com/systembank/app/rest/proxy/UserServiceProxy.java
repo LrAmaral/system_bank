@@ -30,6 +30,11 @@ public class UserServiceProxy implements UserService {
     }
 
     @Override
+    public User findByCPF(String cpf) {
+        return userService.findByCPF(cpf);
+    }
+
+    @Override
     public User updateUser(User user) {
         return userService.updateUser(user);
     }

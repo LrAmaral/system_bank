@@ -34,6 +34,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByCPF(String cpf) {
+        return userRepo.findByCpf(cpf).orElse(null);
+    }
+
+    @Override
     public User updateUser(User user) {
         return userRepo.save(user);
     }

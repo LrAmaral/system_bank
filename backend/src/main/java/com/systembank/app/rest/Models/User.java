@@ -23,7 +23,7 @@ public class User implements UserInterface {
     private String email;
 
     @Column
-    private String CPF;
+    private String cpf;
 
     @Column
     private Double balance = 0.0;
@@ -81,11 +81,11 @@ public class User implements UserInterface {
     }
 
     public String getCpf() {
-        return CPF;
+        return cpf;
     }
 
-    public void setCpf(String CPF) {
-        this.CPF = CPF;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Double getBalance() {

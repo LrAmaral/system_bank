@@ -135,8 +135,13 @@ export function Register() {
       accountStatus,
     }));
 
+    console.log("dados antes do envio", formData);
+
     if (accountType && accountStatus) {
       setIsDialogOpen(false);
+
+      console.log('dados: ', formData);
+      console.log("cpf", formData.cpf);
 
       try {
         const response = await registerUser({

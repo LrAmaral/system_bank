@@ -7,6 +7,7 @@ public interface UserService {
     User authenticateUser(String accountNumber, String password);
     User createUser(User user);
     User findById(Long userId);
+    User findByCPF(String cpf);
     User updateUser(User user);
     User selectStatus(User user);
     void addTransaction(Long userId, int amount, LocalDateTime date, String type);
