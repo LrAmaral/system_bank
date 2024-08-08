@@ -5,11 +5,13 @@ import WithdrawModal from "./withdraw/withdraw";
 import { toast } from "./ui/use-toast";
 import { RegisterUser } from "../lib/register";
 import { TransactionHistory } from "./transaction/transaction";
+import TransferModal from "./transfer";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [availableSlots, setAvailableSlots] = useState<
     Array<{ denomination: number; quantity: number }>
   >([]);
@@ -37,6 +39,52 @@ function Content() {
 
     fetchSlots();
   }, []);
+
+  const handleTransfer = async (recipientAccount: string, amount: number) => {
+    try {
+      if (!user) throw new Error("Usuário não encontrado.");
+
+      // Verifique se a conta destinatária é válida
+      if (recipientAccount.trim() === "") {
+        toast({
+          description: "O destinatário deve ser informado.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Verifique se o valor da transferência é válido
+      if (amount <= 0) {
+        toast({
+          description: "O valor da transferência deve ser maior que zero.",
+          type: "error",
+        });
+        return;
+      }
+
+      if (amount > user.balance) {
+        toast({
+          description:
+            "O valor da transferência não pode ser maior que o saldo disponível.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Aqui você deve implementar a lógica real de transferência
+      // Exemplo:
+      // await transferMoney(user.id, recipientAccount, amount);
+
+      toast({ description: "Transferência realizada com sucesso!" });
+      setIsTransferModalOpen(false);
+    } catch (error: unknown) {
+      console.error("Erro ao realizar a transferência:", error);
+      toast({
+        description: "Erro ao realizar a transferência.",
+        type: "error",
+      });
+    }
+  };
 
   const handleDeposit = async (notes: { [denomination: string]: number }) => {
     try {
@@ -163,6 +211,12 @@ function Content() {
               Depositar
             </button>
           </div>
+          <button
+            onClick={() => setIsTransferModalOpen(true)}
+            className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
+          >
+            Transferir
+          </button>
         </div>
         {userId && <TransactionHistory userId={userId} />}
       </div>
@@ -176,6 +230,12 @@ function Content() {
         onClose={() => setIsWithdrawModalOpen(false)}
         onWithdraw={handleWithdraw}
         availableSlots={availableSlots}
+        balance={user?.balance}
+      />
+      <TransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
+        onTransfer={handleTransfer}
         balance={user?.balance}
       />
     </div>

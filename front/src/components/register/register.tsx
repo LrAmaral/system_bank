@@ -68,7 +68,6 @@ export function Register() {
       value = value.slice(0, 11);
     }
 
-    console.log(`handleCPFChange - value: ${value}`);
     setFormData({
       ...formData,
       cpf: value,
