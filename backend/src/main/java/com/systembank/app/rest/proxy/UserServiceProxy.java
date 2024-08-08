@@ -50,7 +50,7 @@ public class UserServiceProxy implements UserService {
     }
 
     @Override
-    public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
+    public void addTransaction(Long userId, double amount, LocalDateTime date, String type) {
         userService.addTransaction(userId, amount, date, type);
     }
 }

@@ -1,11 +1,10 @@
 package com.systembank.app.rest.Models;
 
 public class TransferRequest {
-    private Long senderId; // Certifique-se de que o tipo é Long
+    private Long senderId; 
     private String recipientCpf;
     private Double amount;
 
-    // Getters e setters
     public Long getSenderId() {
         return senderId;
     }

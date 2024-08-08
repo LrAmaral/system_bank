@@ -75,10 +75,10 @@ public class UserController {
 
     @PostMapping("/transfer")
     public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
-        if (transferRequest.getSenderId() == null) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("ID de remetente não fornecido", "O ID do remetente não pode ser nulo."));
+        if (transferRequest.getSenderId() == null || transferRequest.getRecipientCpf() == null || transferRequest.getAmount() <= 0) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Dados inválidos", "ID do remetente, CPF do destinatário e valor devem ser fornecidos."));
         }
-    
+
         try {
             Optional<User> sender = userRepo.findById(transferRequest.getSenderId());
             Optional<User> recipient = userRepo.findByCpf(transferRequest.getRecipientCpf());
@@ -96,6 +96,9 @@ public class UserController {
 
                 userRepo.save(senderUser);
                 userRepo.save(recipientUser);
+
+                userService.addTransaction(senderUser.getId(), transferRequest.getAmount(), LocalDateTime.now(), "Transferência (Enviada)");
+                userService.addTransaction(recipientUser.getId(), transferRequest.getAmount(), LocalDateTime.now(), "Transferência (Recebida)");
 
                 return ResponseEntity.ok(new SuccessResponse("Transferência realizada com sucesso"));
             } else {

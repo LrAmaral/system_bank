@@ -103,7 +103,6 @@ function Content() {
     try {
       if (user) {
         const updatedUser = await fetchUser(user.id);
-        console.log(updatedUser.data)
         setUser(updatedUser);
         sessionStorage.setItem("user", JSON.stringify(updatedUser));
 
@@ -127,7 +126,7 @@ function Content() {
             {user ? user.username : "Carregando..."}
           </span>
         </div>
-        <p className="text-sm text-white space-y-2 flex flex-col">
+        <div className="text-sm text-white space-y-2 flex flex-col">
           {user ? (
             <span>
               Nº da conta:{" "}
@@ -154,7 +153,7 @@ function Content() {
               "Carregando..."
             )}
           </div>
-        </p>
+        </div>
       </div>
       <div className="flex gap-10">
         <div className="w-96 h-60 flex flex-col justify-between rounded-lg p-6 bg-zinc-800">

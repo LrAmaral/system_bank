@@ -11,5 +11,5 @@ public interface UserService {
     User updateUser(User user);
     User getUserById(Long id);
     User selectStatus(User user);
-    void addTransaction(Long userId, int amount, LocalDateTime date, String type);
+    void addTransaction(Long userId, double amount, LocalDateTime date, String type); 
 }

@@ -9,7 +9,7 @@ interface UserProps {
 interface Transaction {
   id: number;
   amount: number;
-  type: "Depósito" | "Saque";
+  type: "Depósito" | "Saque" | "Transferência";
   date: string;
 }
 
@@ -57,13 +57,20 @@ export const TransactionHistory = ({ userId }: UserProps) => {
                     className={`border-r-2 ${
                       transaction.type === "Depósito"
                         ? "border-green-500"
-                        : "border-red-500"
+                        : transaction.type === "Saque"
+                        ? "border-red-500"
+                        : "border-blue-500"
                     }`}
                   />
-                  <p className="text-sm text-zinc-400">
-                    {transaction.type === "Depósito" ? "+" : "-"} R$
+                  <div className="text-sm text-zinc-400">
+                    {transaction.type === "Depósito"
+                      ? "+"
+                      : transaction.type === "Saque"
+                      ? "-"
+                      : "~"}{" "}
+                    R$
                     {transaction.amount.toFixed(2)}
-                  </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -82,7 +89,6 @@ export const TransactionHistory = ({ userId }: UserProps) => {
           Ver mais
         </button>
       )}
-
       <TransactionHistoryModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -34,14 +34,14 @@ public class User implements UserInterface {
     @Column
     private String accountType;
 
-    @Column 
+    @Column
     private String accountStatus;
 
     @Column
     private Date createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-    @JsonManagedReference  
+    @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
 
     public User() {

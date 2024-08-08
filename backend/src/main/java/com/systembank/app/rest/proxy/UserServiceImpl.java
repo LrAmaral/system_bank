@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addTransaction(Long userId, int amount, LocalDateTime date, String type) {
+    public void addTransaction(Long userId, double amount, LocalDateTime date, String type) {
         User user = findById(userId);
         if (user != null) {
             Transaction transaction = new Transaction(amount, date, type, user);
@@ -62,4 +62,5 @@ public class UserServiceImpl implements UserService {
             updateUser(user);
         }
     }
+
 }
