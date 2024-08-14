@@ -8,12 +8,14 @@ interface DepositModalProps {
     notes: { [denomination: string]: number },
     currency: string
   ) => void;
+  currency: string;
 }
 
 export default function DepositModal({
   isOpen,
   onClose,
   onDeposit,
+  currency,
 }: DepositModalProps) {
   const [notes, setNotes] = useState<{ [denomination: string]: number }>({
     "2": 0,
@@ -22,11 +24,12 @@ export default function DepositModal({
     "20": 0,
     "50": 0,
     "100": 0,
+    "200": 0,
   });
-  const [currency, setCurrency] = useState("BRL");
+  const [currencyNow, setCurrencyNow] = useState(currency);
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrency(e.target.value);
+    setCurrencyNow(e.target.value);
   };
 
   const handleDeposit = () => {
@@ -35,7 +38,7 @@ export default function DepositModal({
       return;
     }
 
-    onDeposit(notes, currency);
+    onDeposit(notes, currencyNow);
     onClose();
   };
 

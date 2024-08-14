@@ -15,6 +15,11 @@ function Content() {
   const [availableSlots, setAvailableSlots] = useState<
     Array<{ denomination: number; quantity: number }>
   >([]);
+  const [currency, setCurrency] = useState("BRL");
+
+  const handleCurrencyChange = () => {
+    setCurrency(currency === "BRL" ? "USD" : "BRL");
+  };
 
   const userId = user ? parseInt(user.id, 10) : null;
 
@@ -168,11 +173,19 @@ function Content() {
             <p className="text-2xl font-semibold">Saldo disponível</p>
             <p className="text-2xl font-bold">
               {user
-                ? `R$ ${user.balance === null ? "0.00" : user.balance}`
+                ? `${currency === "BRL" ? "R$" : "$"} ${
+                    user.balance === null ? "0.00" : user.balance.toFixed(2)
+                  }`
                 : "Carregando..."}
             </p>
           </div>
-          <div className="space-x-4 font-semibold">
+          <div className="grid grid-cols-2 gap-4 font-semibold">
+            <button
+              onClick={handleCurrencyChange}
+              className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium"
+            >
+              {currency === "BRL" ? "Dólar" : "Real"}
+            </button>
             <button
               onClick={() => setIsWithdrawModalOpen(true)}
               className={`cursor-pointer text-white w-40 p-2 rounded-lg transition ease-in-out duration-300 font-medium ${
@@ -190,13 +203,13 @@ function Content() {
             >
               Depositar
             </button>
+            <button
+              onClick={() => setIsTransferModalOpen(true)}
+              className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
+            >
+              Transferir
+            </button>
           </div>
-          <button
-            onClick={() => setIsTransferModalOpen(true)}
-            className="bg-red-500 text-white w-40 p-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300 font-medium hover:text-white"
-          >
-            Transferir
-          </button>
         </div>
         {userId && <TransactionHistory userId={userId} />}
       </div>
@@ -204,6 +217,7 @@ function Content() {
         isOpen={isDepositModalOpen}
         onClose={() => setIsDepositModalOpen(false)}
         onDeposit={handleDeposit}
+        currency={currency}
       />
       <WithdrawModal
         isOpen={isWithdrawModalOpen}
