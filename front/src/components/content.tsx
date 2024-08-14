@@ -40,7 +40,10 @@ function Content() {
     fetchSlots();
   }, []);
 
-  const handleDeposit = async (notes: { [denomination: string]: number }) => {
+  const handleDeposit = async (
+    notes: { [denomination: string]: number },
+    currency: string
+  ) => {
     try {
       if (user) {
         const notesArray = Object.entries(notes)
@@ -52,7 +55,11 @@ function Content() {
             quantity,
           }));
 
-        const response = await deposit(parseInt(user.id, 10), notesArray);
+        const response = await deposit(
+          parseInt(user.id, 10),
+          notesArray,
+          currency
+        );
         const updatedBalance = response.balance;
 
         setUser({ ...user, balance: updatedBalance });

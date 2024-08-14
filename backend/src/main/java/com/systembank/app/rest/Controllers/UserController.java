@@ -1,6 +1,9 @@
 package com.systembank.app.rest.Controllers;
 
+import com.systembank.app.rest.Adapter.DollarCurrencyAdapter;
+import com.systembank.app.rest.Adapter.RealCurrencyAdapter;
 import com.systembank.app.rest.Factory.AbstractFactory;
+import com.systembank.app.rest.Interface.CurrencyAdapter;
 import com.systembank.app.rest.Models.Note;
 import com.systembank.app.rest.Models.TransferRequest;
 import com.systembank.app.rest.Models.User;
@@ -177,15 +180,21 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable Long userId, @RequestBody List<Note> notes) {
+    public ResponseEntity<?> deposit(
+            @PathVariable Long userId, 
+            @RequestBody List<Note> notes,
+            @RequestParam String currency) { 
+
         User user = userService.findById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
         }
 
+        CurrencyAdapter currencyAdapter = currency.equals("USD") ? new DollarCurrencyAdapter() : new RealCurrencyAdapter();
+
         double totalAmount = notes.stream()
-                .mapToDouble(note -> getDenominationValue(note.getDenomination()) * note.getQuantity())
+                .mapToDouble(note -> currencyAdapter.convertToLocalCurrency(getDenominationValue(note.getDenomination())) * note.getQuantity())
                 .sum();
 
         if (totalAmount <= 0) {
@@ -213,7 +222,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-    
+
 
     private double getDenominationValue(int denomination) {
         switch (denomination) {

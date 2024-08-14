@@ -72,10 +72,13 @@ export const loginUser = async (account: string, password: string) => {
 
 export const deposit = async (
   userId: number,
-  notes: { denomination: number; quantity: number }[]
+  notes: { denomination: number; quantity: number }[],
+  currency: string
 ) => {
   try {
-    const response = await api.post(`/users/${userId}/deposit`, notes);
+    const response = await api.post(`/users/${userId}/deposit`, notes, {
+      params: { currency },
+    });
     return response.data;
   } catch (error) {
     handleError(error);
