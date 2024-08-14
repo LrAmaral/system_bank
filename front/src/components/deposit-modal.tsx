@@ -1,22 +1,21 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDeposit: (notes: { [denomination: string]: number }) => void;
+  onDeposit: (
+    notes: { [denomination: string]: number },
+    currency: string
+  ) => void;
+  currency: string;
 }
 
 export default function DepositModal({
   isOpen,
   onClose,
   onDeposit,
+  currency,
 }: DepositModalProps) {
   const [notes, setNotes] = useState<{ [denomination: string]: number }>({
     "2": 0,
@@ -25,7 +24,13 @@ export default function DepositModal({
     "20": 0,
     "50": 0,
     "100": 0,
+    "200": 0,
   });
+  const [currencyNow, setCurrencyNow] = useState(currency);
+
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrencyNow(e.target.value);
+  };
 
   const handleDeposit = () => {
     if (Object.values(notes).some((amount) => amount < 0)) {
@@ -33,7 +38,7 @@ export default function DepositModal({
       return;
     }
 
-    onDeposit(notes);
+    onDeposit(notes, currencyNow);
     onClose();
   };
 
@@ -48,40 +53,47 @@ export default function DepositModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         aria-describedby="Depósito"
-        className=" bg-zinc-900 text-white border-none"
+        className="bg-zinc-900 text-white border-none"
       >
-        <DialogDescription></DialogDescription>
         <DialogHeader>
           <DialogTitle>Depositar Notas</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          <label className="block">
+            Escolha a moeda:
+            <select
+              value={currency}
+              onChange={handleCurrencyChange}
+              className="w-full p-2 mt-2 rounded bg-zinc-800"
+            >
+              <option value="BRL">Real (BRL)</option>
+              <option value="USD">Dólar (USD)</option>
+            </select>
+          </label>
           {Object.keys(notes).map((denomination) => (
-            <div key={denomination} className="flex items-center gap-2">
-              <label className="flex-1">
-                R${denomination}
-                <input
-                  type="number"
-                  value={notes[denomination]}
-                  onChange={(e) =>
-                    handleNoteChange(denomination, parseFloat(e.target.value))
-                  }
-                  placeholder={`Quantidade de R$${denomination}`}
-                  className="w-full p-2 border-none rounded bg-zinc-800"
-                />
-              </label>
-            </div>
+            <label key={denomination} className="block">
+              Nota de {denomination}:
+              <input
+                type="number"
+                value={notes[denomination]}
+                onChange={(e) =>
+                  handleNoteChange(denomination, parseInt(e.target.value, 10))
+                }
+                className="w-full p-2 mt-2 rounded bg-zinc-800"
+              />
+            </label>
           ))}
         </div>
-        <div className="flex gap-2 mt-4">
+        <div className="mt-6 flex justify-end space-x-4">
           <button
             onClick={handleDeposit}
-            className="bg-green-500 text-white p-2 rounded hover:cursor-pointer hover:bg-green-700"
+            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition ease-in-out duration-300"
           >
-            Confirmar
+            Confirmar Depósito
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white p-2 rounded hover:cursor-pointer hover:bg-gray-700"
+            className="bg-zinc-700 text-white px-4 py-2 rounded-lg hover:bg-zinc-800 transition ease-in-out duration-300"
           >
             Cancelar
           </button>
