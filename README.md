@@ -33,7 +33,7 @@ CashEase é uma aplicação moderna e intuitiva para simular operações de um c
 2. Navegue até o diretório do projeto:
 
     ```bash
-    cd cashease-frontend
+    cd front
     ```
 
 3. Instale as dependências:
