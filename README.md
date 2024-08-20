@@ -27,7 +27,7 @@ CashEase é uma aplicação moderna e intuitiva para simular operações de um c
 1. Clone o repositório:
 
     ```bash
-    git clone https://github.com/LrAmaral/system-bank.git
+    git clone https://github.com/LrAmaral/system_bank.git
     ```
 
 2. Navegue até o diretório do projeto:
