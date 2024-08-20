@@ -45,7 +45,7 @@ CashEase é uma aplicação moderna e intuitiva para simular operações de um c
 4. Inicie o servidor de desenvolvimento:
 
     ```bash
-    npm start
+    npm run dev
     ```
 
 ### Backend
