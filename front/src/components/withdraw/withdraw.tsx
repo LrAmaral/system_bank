@@ -29,7 +29,11 @@ export default function WithdrawModal({
   const [error, setError] = useState<string>("");
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWithdrawAmount(Number(event.target.value));
+    const value = event.target.value;
+
+    if (value === "" || !isNaN(Number(value))) {
+      setWithdrawAmount(Number(value) || 0);
+    }
   };
 
   const calculateNotes = () => {
@@ -121,9 +125,11 @@ export default function WithdrawModal({
             <input
               type="number"
               id="withdraw-amount"
-              value={withdrawAmount}
+              value={withdrawAmount || ""}
               onChange={handleAmountChange}
               className="w-full mt-2 p-2 border-none rounded bg-zinc-800"
+              min="0"
+              step="1"
             />
           </div>
           <button
