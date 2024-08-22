@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,16 +7,21 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { format } from "date-fns";
+import { fetchTransactions } from "../../api/api";
+
+interface Transaction {
+  id: number;
+  amount: number;
+  type: "Depósito" | "Saque" | "Transferência";
+  date: string;
+}
 
 interface TransactionHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  transactions: Array<{
-    id: number;
-    amount: number;
-    type: "Depósito" | "Saque" | "Transferência";
-    date: string;
-  }>;
+  transactions: Transaction[];
+  onUpdateTransactions: (transactions: Transaction[]) => void;
+  userId: number;
 }
 
 const PAGE_SIZE = 10;
@@ -25,6 +30,8 @@ export default function TransactionHistoryModal({
   isOpen,
   onClose,
   transactions,
+  onUpdateTransactions,
+  userId,
 }: TransactionHistoryModalProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -38,6 +45,21 @@ export default function TransactionHistoryModal({
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedTransactions = await fetchTransactions(userId);
+        onUpdateTransactions(fetchedTransactions);
+      } catch (error) {
+        console.error("Erro ao buscar transações:", error);
+      }
+    };
+
+    if (isOpen && userId) {
+      fetchData();
+    }
+  }, [isOpen, onUpdateTransactions, userId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

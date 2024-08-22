@@ -93,6 +93,8 @@ export const TransactionHistory = ({ userId }: UserProps) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         transactions={transactions}
+        onUpdateTransactions={setTransactions}
+        userId={userId}
       />
     </div>
   );

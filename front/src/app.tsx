@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Main from "./components/main-content";
+import Main from "./components/pages/main-content";
 import { Toaster } from "./components/ui/toaster";
 import { useNavigate } from "react-router-dom";
 
@@ -22,5 +22,5 @@ function App() {
     </>
   );
 }
- 
+
 export default App;

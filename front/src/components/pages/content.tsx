@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
-import { deposit, withdraw, fetchAvailableSlots, fetchUser } from "../api/api";
-import DepositModal from "./deposit-modal";
-import WithdrawModal from "./withdraw/withdraw";
-import { toast } from "./ui/use-toast";
-import { RegisterUser } from "../lib/register";
-import { TransactionHistory } from "./transaction/transaction";
-import TransferModal from "./transfer";
+import {
+  deposit,
+  withdraw,
+  fetchAvailableSlots,
+  fetchUser,
+} from "../../api/api";
+import DepositModal from "../deposit/deposit-modal";
+import WithdrawModal from "../withdraw/withdraw";
+import { toast } from "../ui/use-toast";
+import { RegisterUser } from "../../lib/register";
+import { TransactionHistory } from "../transaction/transaction";
+import TransferModal from "../transfer/transfer";
 
 function Content() {
   const [user, setUser] = useState<RegisterUser | null>(null);

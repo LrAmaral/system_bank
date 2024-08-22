@@ -1,5 +1,5 @@
 import Content from "./content";
-import NavBar from "./navbar";
+import NavBar from "../navbar/navbar";
 
 export default function FirstPage() {
   return (

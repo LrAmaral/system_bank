@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { getCPFUser, transferFunds } from "../api/api";
+import { getCPFUser, transferFunds } from "../../api/api";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
+} from "../ui/dialog";
 
 interface TransferModalProps {
   isOpen: boolean;
