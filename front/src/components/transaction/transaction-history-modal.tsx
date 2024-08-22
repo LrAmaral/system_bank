@@ -61,6 +61,13 @@ export default function TransactionHistoryModal({
     }
   }, [isOpen, onUpdateTransactions, userId]);
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(amount);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -96,8 +103,7 @@ export default function TransactionHistoryModal({
                     : transaction.type === "Saque"
                     ? "-"
                     : "~"}{" "}
-                  R$
-                  {transaction.amount.toFixed(2)}
+                  {formatCurrency(transaction.amount)}
                 </span>
                 <span className="text-sm text-zinc-400">
                   {format(new Date(transaction.date), "dd/MM/yyyy HH:mm:ss")}

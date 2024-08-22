@@ -128,14 +128,14 @@ export default function WithdrawModal({
           </div>
           <button
             onClick={calculateNotes}
-            className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
+            className="bg-red-500 text-white p-2 rounded mb-6 hover:bg-red-700"
           >
             Calcular Notas
           </button>
           {error && <div className="mt-4 text-red-500">{error}</div>}
           <div>
             {Object.entries(selectedNotes).map(([denomination, count]) => (
-              <div key={denomination} className="mb-4">
+              <div key={denomination} className="mb-2">
                 <p className="text-lg font-semibold">
                   {count} nota de R$ {denomination}:
                 </p>

@@ -135,7 +135,6 @@ export function Register() {
       accountStatus,
     }));
 
-
     if (accountType && accountStatus) {
       setIsDialogOpen(false);
 

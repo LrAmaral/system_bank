@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 interface DepositModalProps {
@@ -8,14 +8,12 @@ interface DepositModalProps {
     notes: { [denomination: string]: number },
     currency: string
   ) => void;
-  currency: string;
 }
 
 export default function DepositModal({
   isOpen,
   onClose,
   onDeposit,
-  currency,
 }: DepositModalProps) {
   const [notes, setNotes] = useState<{ [denomination: string]: number }>({
     "2": 0,
@@ -26,11 +24,7 @@ export default function DepositModal({
     "100": 0,
     "200": 0,
   });
-  const [currencyNow, setCurrencyNow] = useState(currency);
-
-  useEffect(() => {
-    setCurrencyNow(currency);
-  }, [currency]);
+  const [currencyNow, setCurrencyNow] = useState("USD");
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrencyNow(e.target.value);
@@ -66,7 +60,7 @@ export default function DepositModal({
           <label className="block">
             Escolha a moeda:
             <select
-              value={currencyNow} // Usando o estado local
+              value={currencyNow}
               onChange={handleCurrencyChange}
               className="w-full p-2 mt-2 rounded bg-zinc-800"
             >

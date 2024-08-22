@@ -31,6 +31,7 @@ export const registerUser = async (user: RegisterUser) => {
 export const getCPFUser = async (cpf: string) => {
   try {
     const response = await api.get(`/users/cpf/${cpf}`);
+    console.log(response.data)
     return response.data;
   } catch (error) {
     handleError(error);
