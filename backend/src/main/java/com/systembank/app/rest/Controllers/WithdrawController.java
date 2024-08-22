@@ -1,7 +1,9 @@
 package com.systembank.app.rest.Controllers;
 
 import com.systembank.app.rest.Models.Slot;
+import com.systembank.app.rest.Models.Transaction;
 import com.systembank.app.rest.Models.User;
+import com.systembank.app.rest.Observable.Observable;
 import com.systembank.app.rest.Proxy.UserService;
 import com.systembank.app.rest.Services.SlotManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/slots")
-public class WithdrawController {
+public class WithdrawController extends Observable {
 
     @Autowired
     private UserService userService;
@@ -43,8 +45,8 @@ public class WithdrawController {
                         .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
             }
 
-            int totalAmount = selectedNotes.entrySet().stream()
-                    .mapToInt(entry -> entry.getKey() * entry.getValue())
+            double totalAmount = selectedNotes.entrySet().stream()
+                    .mapToDouble(entry -> entry.getKey() * entry.getValue())
                     .sum();
 
             if (user.getBalance() < totalAmount) {
@@ -56,7 +58,10 @@ public class WithdrawController {
                 user.setBalance(user.getBalance() - totalAmount);
                 userService.updateUser(user);
 
+                Transaction transaction = new Transaction(totalAmount, LocalDateTime.now(), "Saque", user);
                 userService.addTransaction(userId, totalAmount, LocalDateTime.now(), "Saque");
+
+                notifyObservers(transaction);
 
                 return ResponseEntity.ok(new SuccessResponse("Saque realizado com sucesso."));
             } else {

@@ -11,7 +11,7 @@ public class Transaction {
     private Long id;
 
     @Column
-    private double amount; // Mudar para double
+    private double amount; 
 
     @Column
     private LocalDateTime date;
@@ -43,11 +43,11 @@ public class Transaction {
     }
 
     public double getAmount() {
-        return amount; // Atualizar tipo
+        return amount; 
     }
 
     public void setAmount(double amount) {
-        this.amount = amount; // Atualizar tipo
+        this.amount = amount; 
     }
 
     public LocalDateTime getDate() {

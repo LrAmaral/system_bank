@@ -15,7 +15,7 @@ public class Note {
     private int denomination;
     private int quantity;
 
-    // Getters e Setters
+    
 
     public Long getId() {
         return id;
