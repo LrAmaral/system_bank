@@ -1,27 +1,35 @@
 package com.systembank.app.rest.Models;
 
 public class Slot {
-  private int denomination;
-  private int quantity;
+    private int denomination;
+    private int quantity;
 
-  public Slot(int denomination, int quantity) {
-      this.denomination = denomination;
-      this.quantity = quantity;
-  }
+    public Slot(int denomination, int quantity) {
+        this.denomination = denomination;
+        this.quantity = quantity;
+    }
 
-  public int getDenomination() {
-      return denomination;
-  }
+    public int getDenomination() {
+        return denomination;
+    }
 
-  public int getQuantity() {
-      return quantity;
-  }
+    public int getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(int quantity) {
-      this.quantity = quantity;
-  }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-  public boolean isAvailable(int requiredQuantity) {
-      return this.quantity >= requiredQuantity;
-  }
+    public boolean isAvailable(int requiredQuantity) {
+        return this.quantity >= requiredQuantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Slot{" +
+                "denomination=" + denomination +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

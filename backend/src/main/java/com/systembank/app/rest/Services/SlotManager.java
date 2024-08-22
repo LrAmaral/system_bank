@@ -1,49 +1,50 @@
 package com.systembank.app.rest.Services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.systembank.app.rest.Models.Note;
 import com.systembank.app.rest.Models.Slot;
+import com.systembank.app.rest.Repo.NoteRepository;
 
 @Component
 public class SlotManager {
     private List<Slot> slots;
 
-    public SlotManager() {
-        slots = new ArrayList<>();
-        slots.add(new Slot(2, 10));
-        slots.add(new Slot(5, 10));
-        slots.add(new Slot(10, 10));
-        slots.add(new Slot(20, 10));
-        slots.add(new Slot(50, 10));
-        slots.add(new Slot(100, 10));
-        slots.add(new Slot(200, 10));
-    }
+    @Autowired
+    private NoteRepository noteRepository;
 
     public boolean withdraw(Map<Integer, Integer> selectedNotes) {
-        List<Slot> tempSlots = new ArrayList<>(slots);
-
+        
         for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
             int denomination = entry.getKey();
             int count = entry.getValue();
 
-            for (Slot slot : tempSlots) {
-                if (slot.getDenomination() == denomination) {
-                    if (slot.getQuantity() < count) {
-                        return false;
-                    }
-                    slot.setQuantity(slot.getQuantity() - count);
-                }
+            Note note = noteRepository.findByDenomination(denomination);
+            if (note == null || note.getQuantity() < count) {
+                return false; 
             }
         }
 
-        slots = tempSlots;
-        return true;
+        
+        for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
+            int denomination = entry.getKey();
+            int count = entry.getValue();
+
+            Note note = noteRepository.findByDenomination(denomination);
+            if (note != null) {
+                note.setQuantity(note.getQuantity() - count);
+                noteRepository.save(note); 
+            }
+        }
+
+        return true; 
     }
 
+    
     public void updateSlots(Map<Integer, Integer> selectedNotes) {
         for (Map.Entry<Integer, Integer> entry : selectedNotes.entrySet()) {
             int denomination = entry.getKey();
@@ -59,7 +60,7 @@ public class SlotManager {
         }
     }
 
-    public List<Slot> getSlots() {
-        return slots;
+    public List<Note> getSlotsFromDB() {
+        return noteRepository.findAll();
     }
 }

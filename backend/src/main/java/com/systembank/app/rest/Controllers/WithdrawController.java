@@ -1,6 +1,6 @@
 package com.systembank.app.rest.Controllers;
 
-import com.systembank.app.rest.Models.Slot;
+import com.systembank.app.rest.Models.Note;
 import com.systembank.app.rest.Models.Transaction;
 import com.systembank.app.rest.Models.User;
 import com.systembank.app.rest.Observable.Observable;
@@ -26,16 +26,15 @@ public class WithdrawController extends Observable {
     private SlotManager slotManager;
 
     @GetMapping("/available-slots")
-    public ResponseEntity<?> getAvailableSlots() {
+      public ResponseEntity<?> getAvailableSlots() {
         try {
-            List<Slot> slots = slotManager.getSlots();
+            List<Note> slots = slotManager.getSlotsFromDB(); // Atualize aqui
             return ResponseEntity.ok(slots);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Erro ao buscar notas disponíveis", e.getMessage()));
         }
     }
-
     @PostMapping("/withdraw/{userId}")
     public ResponseEntity<?> withdraw(@PathVariable Long userId, @RequestBody Map<Integer, Integer> selectedNotes) {
         try {
@@ -44,25 +43,28 @@ public class WithdrawController extends Observable {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResponse("Usuário não encontrado", "O usuário com o ID fornecido não foi encontrado."));
             }
-
+    
             double totalAmount = selectedNotes.entrySet().stream()
                     .mapToDouble(entry -> entry.getKey() * entry.getValue())
                     .sum();
-
+    
             if (user.getBalance() < totalAmount) {
                 return ResponseEntity.badRequest()
                         .body(new ErrorResponse("Saldo insuficiente", "O valor solicitado é maior que o saldo disponível."));
             }
-
-            if (slotManager.withdraw(selectedNotes)) {
+    
+            boolean withdrawSuccess = slotManager.withdraw(selectedNotes);
+            System.out.println("Resultado do saque: " + withdrawSuccess);
+    
+            if (withdrawSuccess) {
                 user.setBalance(user.getBalance() - totalAmount);
                 userService.updateUser(user);
-
+    
                 Transaction transaction = new Transaction(totalAmount, LocalDateTime.now(), "Saque", user);
                 userService.addTransaction(userId, totalAmount, LocalDateTime.now(), "Saque");
-
+    
                 notifyObservers(transaction);
-
+    
                 return ResponseEntity.ok(new SuccessResponse("Saque realizado com sucesso."));
             } else {
                 return ResponseEntity.badRequest()
@@ -73,6 +75,8 @@ public class WithdrawController extends Observable {
                     .body(new ErrorResponse("Erro ao processar saque", e.getMessage()));
         }
     }
+    
+
 
     public static class ErrorResponse {
         private String error;
