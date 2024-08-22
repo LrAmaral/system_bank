@@ -61,10 +61,11 @@ export default function TransactionHistoryModal({
     }
   }, [isOpen, onUpdateTransactions, userId]);
 
-  const formatCurrency = (amount: number) => {
+  // Format the number to have two decimal places and thousand separators without currency symbol
+  const formatAmount = (amount: number) => {
     return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -103,7 +104,7 @@ export default function TransactionHistoryModal({
                     : transaction.type === "Saque"
                     ? "-"
                     : "~"}{" "}
-                  {formatCurrency(transaction.amount)}
+                  {formatAmount(transaction.amount)}
                 </span>
                 <span className="text-sm text-zinc-400">
                   {format(new Date(transaction.date), "dd/MM/yyyy HH:mm:ss")}
